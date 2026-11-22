@@ -8,42 +8,95 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#eff3f5;--card:#fff;--ink:#10212b;--mut:#5d6f7a;--line:#dbe3e8;--acc:#1f5eff;--accsoft:#dbe6ff;--onacc:#fff;--warn:#8a5a00;--warnbg:#ffefc2;--ok:#127a52}
-@media(prefers-color-scheme:dark){:root{--bg:#0e171c;--card:#16232a;--ink:#e8eff2;--mut:#93a5af;--line:#26363f;--acc:#6f9bff;--accsoft:#1d3158;--onacc:#0b1530;--warn:#ffd27a;--warnbg:#3a2f12;--ok:#5fd6a2}}
+:root{--bg:#f3f6f5;--card:#fff;--ink:#12241f;--mut:#61756f;--line:#e0e8e5;--acc:#0f766e;--accsoft:#d5eee8;--onacc:#fff;--warn:#8a5a00;--warnbg:#ffefc2;--ok:#127a52;--h1:#0c2926;--h2:#1c4d45}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1513;--card:#142220;--ink:#e6efec;--mut:#8fa59f;--line:#223531;--acc:#4fd1bd;--accsoft:#173a35;--onacc:#06201c;--warn:#ffd27a;--warnbg:#3a2f12;--ok:#5fd6a2;--h1:#0a1f1c;--h2:#16403a}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'DM Sans',system-ui,sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-main{max-width:620px;margin:0 auto;padding:18px 16px}
-h1{font:700 28px/1.15 'Bricolage Grotesque',system-ui,sans-serif;margin:6px 0 2px}
-h2{font:600 17px 'Bricolage Grotesque',system-ui,sans-serif;margin:26px 0 10px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'DM Sans',system-ui,sans-serif}
+h1,h2,.brand b,.big{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+h1{font-size:26px;line-height:1.15;margin:0}
+h2{font-size:17px;margin:0 0 10px}
 .mut{color:var(--mut);font-size:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
-.row{display:flex;align-items:center;gap:10px}.sp{flex:1;min-width:0}
-.bar{height:8px;background:var(--accsoft);border-radius:99px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .3s}
+.sp{flex:1;min-width:0}
+.row{display:flex;align-items:center;gap:10px}
+svg{flex:none}
+
+/* kerangka */
+.side{display:none}
+main{max-width:1040px;margin:0 auto;padding:16px 16px calc(92px + env(safe-area-inset-bottom))}
+#bottom-nav{position:fixed;left:0;right:0;bottom:0;display:flex;gap:4px;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.bl{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;color:var(--mut);font-size:12px;padding:8px 2px;border-radius:12px;min-height:0}
+.bl.on{background:var(--accsoft);color:var(--ink);font-weight:700}
+@media(min-width:860px){
+  .shell{display:grid;grid-template-columns:250px 1fr}
+  .side{display:flex;flex-direction:column;position:sticky;top:0;height:100vh;background:var(--card);border-right:1px solid var(--line);padding:20px 14px}
+  main{width:100%;padding:28px 32px 48px}
+  #bottom-nav{display:none}
+}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.logo{width:38px;height:38px;border-radius:12px;background:var(--acc);color:var(--onacc);display:grid;place-items:center}
+.brand b{font-size:17px;display:block;line-height:1.2}
+.grp{font-size:13px;color:var(--mut);margin:16px 8px 6px}
+.sl{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:10px 12px;border-radius:12px;min-height:44px;color:var(--ink)}
+.sl:hover{background:var(--bg)}
+.sl.on{background:var(--acc);color:var(--onacc);font-weight:700}
+.me{margin-top:auto;display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding:14px 6px 0}
+.av{width:36px;height:36px;border-radius:50%;background:var(--accsoft);display:grid;place-items:center;font-weight:700}
+.me a{color:var(--mut);padding:6px;border-radius:8px;display:grid}
+.me .sp div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* komponen */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.bar{height:8px;background:var(--accsoft);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .3s}
 button,input,select{font:inherit;color:var(--ink)}
 button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px;cursor:pointer;min-height:40px}
 button.p{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:700}
 button.x{border:0;background:none;color:var(--mut);padding:4px 8px;min-height:0;font-size:14px}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 input,select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;min-height:42px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.wide{grid-column:1/-1}
-.tag{display:inline-block;background:var(--accsoft);border-radius:99px;padding:2px 10px;font-size:13px;margin-top:6px}.tag.warn{background:var(--warnbg);color:var(--warn)}
+.tag{display:inline-block;background:var(--accsoft);border-radius:99px;padding:2px 10px;font-size:13px;margin-top:6px}
+.tag.warn{background:var(--warnbg);color:var(--warn)}
 .dots{display:flex;gap:5px}.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line)}.dot.on{background:var(--ok);border-color:var(--ok)}
-.hero{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:var(--card);min-height:190px;margin:14px 0}
-.water{position:absolute;left:0;right:0;bottom:0;background:var(--accsoft);transition:height .6s}
-.water::before{content:"";position:absolute;left:0;right:0;top:-6px;height:12px;background:var(--accsoft);border-radius:50% 50% 0 0/100% 100% 0 0}
-.hero-in{position:relative;padding:18px;display:flex;flex-direction:column;gap:6px;min-height:190px}
-.big{font:700 56px/1 'Bricolage Grotesque',system-ui,sans-serif}.big small{font:500 18px 'DM Sans',sans-serif;color:var(--mut);margin-left:6px}
-.hero .row{margin-top:auto}.hero button{min-width:48px;font-size:20px}
-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:0;background:none;border-radius:10px;color:var(--mut);padding:10px 4px}
-nav button.on{background:var(--accsoft);color:var(--ink);font-weight:700}
 .empty{color:var(--mut);padding:6px 2px}
+.ph{margin:4px 0 18px}
+
+/* beranda */
+.hero{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(120deg,var(--h1),var(--h2));color:#fff;margin-bottom:14px}
+.water{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.1);transition:height .7s}
+.water::before{content:"";position:absolute;left:0;right:0;top:-7px;height:14px;background:rgba(255,255,255,.1);border-radius:50% 50% 0 0/100% 100% 0 0}
+.hero-in{position:relative;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;padding:24px}
+.hero p{color:rgba(255,255,255,.78);margin:8px 0 0;max-width:36ch}
+.big{font-size:54px;line-height:1;font-weight:700}.big small{font:500 17px 'DM Sans',sans-serif;opacity:.75;margin-left:6px}
+.hero .row{margin-top:10px}
+.hero button{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28);min-width:48px;font-size:20px}
+.hero button.lt{background:#fff;color:#0c2926;border-color:#fff}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:6px}
+.stat{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.ic{width:42px;height:42px;border-radius:12px;background:var(--accsoft);display:grid;place-items:center}
+.stat.w .ic{background:var(--warnbg);color:var(--warn)}
+.stat b{font:700 24px/1.1 'Bricolage Grotesque',sans-serif;display:block}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0 22px}
+.qa{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px;border-radius:16px}
+.qa .ic{margin-bottom:6px}.qa b{font-size:16px}
+.cols{display:grid;gap:0 18px}
+.cols>section{min-width:0}
+.cards2{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0 10px}
+@media(min-width:860px){.cols{grid-template-columns:3fr 2fr}.cols.rev{grid-template-columns:2fr 3fr}.cols.rev>section:first-child{position:sticky;top:24px;align-self:start}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<main id="app"><p class="mut">Memuat...</p></main>
-<nav id="nav"></nav>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="logo" id="logo"></span><div><b>Tracker Rumah</b><div class="mut">Catatan harian berdua</div></div></div>
+    <div id="side-nav"></div>
+    <div class="me"><span class="av" id="av"></span><div class="sp"><b id="me-name"></b><div class="mut" id="me-mail"></div></div>
+      <a href="/cdn-cgi/access/logout" title="Keluar" aria-label="Keluar" id="out"></a></div>
+  </aside>
+  <main id="app"><p class="mut">Memuat...</p></main>
+</div>
+<nav id="bottom-nav"></nav>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -52,6 +105,9 @@ const addDays=(d,n)=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);r
 const diff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
 const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short'});
 const key=n=>n.trim().toLowerCase();
+const ICONS={home:'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',box:'M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8',droplet:'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z',user:'M20 21v-1a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v1M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',check:'M20 6L9 17l-5-5',alert:'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',out:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',plus:'M12 5v14M5 12h14'};
+const icon=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`;
+const NAV=[['Utama',[['home','Beranda','home'],['stock','Stok','box']]],['Kebiasaan',[['daily','Harian bersama','droplet'],['me','Punyaku','user']]]];
 let S={items:[],habits:[],logs:[],me:''},tab='home';
 
 async function api(m,p,b){
@@ -91,7 +147,7 @@ function habitCard(h){
 }
 function miniHabit(h){
   const t=h.target||1,v=val(h,S.me,today());
-  return `<div class="card" onclick="go('${h.owner==='*'?'daily':'me'}')"><div class="row"><b class="sp">${esc(h.name)}</b><span class="mut">${h.kind==='count'?v+'/'+t+' '+esc(h.unit):(v?'Sudah':'Belum')}</span></div><div class="bar"><i style="width:${Math.min(100,v/t*100)}%"></i></div></div>`;
+  return `<div class="card" style="cursor:pointer" onclick="go('${h.owner==='*'?'daily':'me'}')"><div class="row"><b class="sp">${esc(h.name)}</b><span class="mut">${h.kind==='count'?v+'/'+t+' '+esc(h.unit):(v?'Sudah':'Belum')}</span></div><div class="bar"><i style="width:${Math.min(100,v/t*100)}%"></i></div></div>`;
 }
 const habitForm=shared=>`<div class="card"><div class="grid">
   <input id="h-name" class="wide" placeholder="${shared?'Nama kebiasaan (misal olahraga)':'Nama kebiasaan (misal minum kreatin)'}">
@@ -122,46 +178,60 @@ const finCard=i=>`<div class="card"><div class="row"><div class="sp"><b>${esc(i.
 
 /* Tampilan */
 const empty=t=>`<div class="empty">${t}</div>`;
+const stat=(ic,num,label,w)=>`<div class="stat ${w?'w':''}"><span class="ic">${icon(ic,22)}</span><div><b>${num}</b><span class="mut">${label}</span></div></div>`;
 function go(t){tab=t;render();scrollTo(0,0)}
+function goAdd(){go('stock');setTimeout(()=>$('#in-name')?.focus(),60)}
+function nav(){
+  $('#side-nav').innerHTML=NAV.map(([g,items])=>`<div class="grp">${g}</div>`+items.map(([k,l,ic])=>`<button class="sl ${tab===k?'on':''}" onclick="go('${k}')">${icon(ic)}<span>${l}</span></button>`).join('')).join('');
+  $('#bottom-nav').innerHTML=NAV.flatMap(([,items])=>items).map(([k,l,ic])=>`<button class="bl ${tab===k?'on':''}" onclick="go('${k}')">${icon(ic)}<span>${l.split(' ')[0]}</span></button>`).join('');
+}
 function render(){
   const sh=S.habits.filter(h=>h.owner==='*'),mine=S.habits.filter(h=>h.owner!=='*');
   const act=S.items.filter(i=>!i.out_date),fin=S.items.filter(i=>i.out_date);
+  const al=act.filter(i=>{const a=avgLast(i.name);return a!=null&&diff(i.in_date,today())>=a*.85});
+  const name=S.me.split('@')[0],Name=name?name[0].toUpperCase()+name.slice(1):'';
+  $('#logo').innerHTML=icon('droplet',22);$('#out').innerHTML=icon('out',18);
+  $('#av').textContent=(Name[0]||'?');$('#me-name').textContent=Name;$('#me-mail').textContent=S.me;
   let h='';
   if(tab==='home'){
-    h+=`<h1>Halo, ${esc(S.me.split('@')[0])}</h1><div class="mut">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})}</div>`;
     const w=sh.find(x=>x.kind==='count');
-    if(w){const t=w.target||1,v=val(w,S.me,today());
-      h+=`<div class="hero"><div class="water" style="height:${Math.min(100,v/t*100)}%"></div><div class="hero-in"><div>${esc(w.name)} hari ini</div>
-      <div class="big">${v}<small>dari ${t} ${esc(w.unit)}</small></div>
-      <div class="row"><button aria-label="Kurangi" onclick="setLog(${w.id},${Math.max(0,v-1)})">−</button><button class="p" aria-label="Tambah" onclick="setLog(${w.id},${v+1})">+</button></div></div></div>`}
-    const rest=S.habits.filter(x=>x!==w);
-    h+=`<h2>Kebiasaan hari ini</h2>`+(rest.map(miniHabit).join('')||empty('Tambahkan kebiasaan di tab Harian atau Saya.'));
-    const al=act.filter(i=>{const a=avgLast(i.name);return a!=null&&diff(i.in_date,today())>=a*.85});
-    h+=`<h2>Stok yang perlu dicek</h2>`+(al.map(itemCard).join('')||`<div class="card mut">Belum ada barang yang mendekati habis. Ada ${act.length} barang tercatat masih tersedia.</div>`);
+    const nDone=S.habits.filter(x=>done(x,val(x,S.me,today()))).length;
+    const hr=new Date().getHours(),sal=hr<11?'Selamat pagi':hr<15?'Selamat siang':hr<18?'Selamat sore':'Selamat malam';
+    const sum=`${nDone} dari ${S.habits.length} kebiasaan selesai hari ini. ${al.length?al.length+' barang perlu dicek.':'Stok masih aman.'}`;
+    let glass='',pct=0;
+    if(w){const t=w.target||1,v=val(w,S.me,today());pct=Math.min(100,v/t*100);
+      glass=`<div><div>${esc(w.name)} hari ini</div><div class="big">${v}<small>dari ${t} ${esc(w.unit)}</small></div>
+      <div class="row"><button aria-label="Kurangi" onclick="setLog(${w.id},${Math.max(0,v-1)})">−</button><button class="lt" aria-label="Tambah" onclick="setLog(${w.id},${v+1})">+</button></div></div>`}
+    h+=`<section class="hero"><div class="water" style="height:${Math.max(6,pct)}%"></div><div class="hero-in"><div><h1>${sal}, ${esc(Name)}</h1><p>${sum}</p></div>${glass}</div></section>
+    <div class="stats">${stat('box',act.length,'Stok tersedia')}${stat('alert',al.length,'Perlu dicek',al.length>0)}${stat('check',nDone+'/'+S.habits.length,'Kebiasaan hari ini')}</div>
+    <div class="quick">
+      <button class="qa" onclick="goAdd()"><span class="ic">${icon('plus',22)}</span><b>Catat barang masuk</b><span class="mut">Galon, beras, telur</span></button>
+      <button class="qa" onclick="go('daily')"><span class="ic">${icon('droplet',22)}</span><b>Harian bersama</b><span class="mut">Minum air dan lainnya</span></button>
+      <button class="qa" onclick="go('me')"><span class="ic">${icon('user',22)}</span><b>Punyaku</b><span class="mut">Kebiasaan pribadi</span></button></div>
+    <div class="cols"><section><h2>Stok yang perlu dicek</h2>${al.map(itemCard).join('')||`<div class="card mut">Belum ada barang yang mendekati habis. Ada ${act.length} barang tercatat masih tersedia.</div>`}</section>
+    <section><h2>Kebiasaan hari ini</h2>${S.habits.filter(x=>x!==w).map(miniHabit).join('')||empty('Tambahkan kebiasaan di tab Harian atau Punyaku.')}</section></div>`;
   }
   if(tab==='stock'){
-    h+=`<h1>Stok</h1><div class="mut">Catat kapan barang masuk dan kapan habis.</div><h2>Barang masuk</h2>
-    <div class="card"><div class="grid"><input id="in-name" class="wide" list="names" placeholder="Nama barang (galon, beras, telur)">
+    h+=`<div class="ph"><h1>Stok</h1><div class="mut">Catat kapan barang masuk dan kapan habis.</div></div>
+    <div class="cols rev"><section><h2>Barang masuk</h2><div class="card"><div class="grid"><input id="in-name" class="wide" list="names" placeholder="Nama barang (galon, beras, telur)">
     <input id="in-qty" type="number" step="any" min="0" value="1" aria-label="Jumlah"><input id="in-unit" placeholder="Satuan (buah, kg)">
     <input id="in-date" class="wide" type="date" value="${today()}" aria-label="Tanggal masuk"><input id="in-note" class="wide" placeholder="Catatan, boleh kosong"></div>
     <button class="p" onclick="addItem()">Catat barang masuk</button></div>
-    <datalist id="names">${[...new Set(S.items.map(i=>i.name))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
-    <h2>Masih ada (${act.length})</h2>${act.map(itemCard).join('')||empty('Belum ada stok. Catat barang yang baru masuk di atas.')}
-    <h2>Sudah habis</h2>${fin.slice(0,30).map(finCard).join('')||empty('Riwayat barang habis akan muncul di sini.')}`;
+    <datalist id="names">${[...new Set(S.items.map(i=>i.name))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist></section>
+    <section><h2>Masih ada (${act.length})</h2>${act.map(itemCard).join('')||empty('Belum ada stok. Catat barang yang baru masuk.')}
+    <h2 style="margin-top:22px">Sudah habis</h2>${fin.slice(0,30).map(finCard).join('')||empty('Riwayat barang habis akan muncul di sini.')}</section></div>`;
   }
   if(tab==='daily'){
-    h+=`<h1>Harian bersama</h1><div class="mut">Kebiasaan yang sama untuk semua orang. Catatanmu tetap terpisah.</div><h2>Hari ini</h2>`
-      +(sh.map(habitCard).join('')||empty('Belum ada.'))+`<h2>Tambah kebiasaan bersama</h2>`+habitForm(true);
+    h+=`<div class="ph"><h1>Harian bersama</h1><div class="mut">Kebiasaan yang sama untuk semua orang. Catatanmu tetap terpisah.</div></div>
+    <div class="cards2">${sh.map(habitCard).join('')||empty('Belum ada.')}</div><h2 style="margin-top:14px">Tambah kebiasaan bersama</h2><div style="max-width:460px">${habitForm(true)}</div>`;
   }
   if(tab==='me'){
-    h+=`<h1>Punyaku</h1><div class="mut">Hanya kamu yang melihat kebiasaan ini.</div><h2>Hari ini</h2>`
-      +(mine.map(habitCard).join('')||empty('Belum ada. Tambahkan misalnya minum kreatin di bawah.'))+`<h2>Tambah kebiasaan pribadi</h2>`+habitForm(false);
+    h+=`<div class="ph"><h1>Punyaku</h1><div class="mut">Hanya kamu yang melihat kebiasaan ini.</div></div>
+    <div class="cards2">${mine.map(habitCard).join('')||empty('Belum ada. Tambahkan misalnya minum kreatin di bawah.')}</div><h2 style="margin-top:14px">Tambah kebiasaan pribadi</h2><div style="max-width:460px">${habitForm(false)}</div>`;
   }
-  $('#app').innerHTML=h;
-  $('#nav').innerHTML=[['home','Beranda'],['stock','Stok'],['daily','Harian'],['me','Punyaku']]
-    .map(([k,l])=>`<button class="${tab===k?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+  $('#app').innerHTML=h;nav();
 }
-load();
+nav();load();
 </script>
 </body>
 </html>
