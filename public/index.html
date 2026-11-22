@@ -146,7 +146,7 @@ const fmtS=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',
 const fmtN=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'numeric'});
 const key=n=>n.trim().toLowerCase();
 
-let S={items:[],habits:[],logs:[],me:''}, tab='home', cDays=7, sTab='active';
+let S={items:[],habits:[],logs:[],workouts:[],me:''}, tab='home', cDays=7, sTab='active';
 
 const IC={
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg>',
@@ -161,7 +161,8 @@ const IC={
   drop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
-  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  dumb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5l11 11"/><path d="M21 21l-1-1"/><path d="M3 3l1 1"/><path d="M18 22l4-4"/><path d="M2 6l4-4"/><path d="M3 10l7-7"/><path d="M14 21l7-7"/></svg>'
 };
 
 window.onunhandledrejection=e=>alert(e.reason?.message||'Terjadi kesalahan');
@@ -230,7 +231,7 @@ async function doLogout(){
 async function load(){
   try{
     const d=await api('GET','state');
-    S={items:d.items||[],habits:d.habits||[],logs:d.logs||[],me:d.me||'user'};
+    S={items:d.items||[],habits:d.habits||[],logs:d.logs||[],workouts:d.workouts||[],me:d.me||'user'};
     renderShell();
   }catch(e){
     if(e.message==='AUTH_REQUIRED') return;
@@ -252,6 +253,7 @@ async function delHabit(id){if(confirm('Hapus kebiasaan ini?')){await api('DELET
 async function addItem(){const n=$('#in-name').value.trim();if(!n)return;await api('POST','items',{name:n,qty:$('#in-qty').value,unit:$('#in-unit').value,in_date:$('#in-date').value||today(),note:$('#in-note').value});load()}
 async function markOut(id,d){await api('PATCH','items/'+id,{out_date:d});load()}
 async function delItem(id){if(confirm('Hapus catatan barang ini?')){await api('DELETE','items/'+id);load()}}
+async function delWorkout(id){if(confirm('Hapus riwayat latihan ini?')){await api('DELETE','workouts/'+id);load()}}
 
 function go(t){tab=t;renderView();scrollTo(0,0)}
 function setDays(n){cDays=n;renderView()}
@@ -330,6 +332,27 @@ function renderChart(wHabit,days){
     <div class="cleg">${partner?`<span><i style="background:#4f46e5"></i>Kamu</span><span><i style="background:#38bdf8"></i>Pasangan (${esc(partner.split('@')[0])})</span>`:`<span><i style="background:#059669"></i>100% Tercapai</span><span><i style="background:#4f46e5"></i>Sebagian</span><span><i style="background:#e2e8f0"></i>Kosong</span>`}</div>`;
 }
 
+function renderWorkoutsCard(){
+  if(!S.workouts.length) return '';
+  return `
+    <div class="tcard">
+      <div class="thead">
+        <div class="ctitle">${IC.dumb}<span>Log Olahraga (Hevy / Apple Health)</span></div>
+        <span class="pill p-grn">Auto-Sync Aktif</span>
+      </div>
+      <div class="tscroll"><table><thead><tr><th>Tanggal</th><th>Akun</th><th>Latihan</th><th>Durasi</th><th>Kalori</th><th class="num">Sumber</th></tr></thead><tbody>
+        ${S.workouts.slice(0,10).map(w=>`<tr>
+          <td><b>${fmtS(w.date)}</b></td>
+          <td>${esc(w.email.split('@')[0])}</td>
+          <td class="tdm">${esc(w.title)}</td>
+          <td>${w.duration_min?w.duration_min+' mnt':'—'}</td>
+          <td>${w.calories?w.calories+' kkal':'—'}</td>
+          <td class="num"><span class="pill p-sky">${esc(w.source||'Hevy')}</span> <button class="bdel" onclick="delWorkout(${w.id})">Hapus</button></td>
+        </tr>`).join('')}
+      </tbody></table></div>
+    </div>`;
+}
+
 function renderHome(sh,mine,act,fin){
   const u=S.me.split('@')[0], clk=clockNow(), totH=S.habits.length, doneT=S.habits.filter(h=>done(h,val(h,S.me,today()))).length;
   const last7=[6,5,4,3,2,1,0].map(i=>addDays(today(),-i));
@@ -375,6 +398,8 @@ function renderHome(sh,mine,act,fin){
       <button class="qacard" onclick="go('daily')"><div class="qatop"><div class="qaico i-org">${IC.users}</div><span style="color:var(--mut2)">→</span></div><div class="qatitle">Harian Bersama</div><div class="qasub">${sh.length} kebiasaan</div></button>
       <button class="qacard" onclick="go('me')"><div class="qatop"><div class="qaico i-grn">${IC.user}</div><span style="color:var(--mut2)">→</span></div><div class="qatitle">Tracker Punyaku</div><div class="qasub">${mine.length} kebiasaan</div></button>
     </div>
+
+    ${renderWorkoutsCard()}
 
     <div class="tcard">
       <div class="thead"><div class="ctitle">${IC.list}<span>Ringkasan Kebiasaan Harian</span></div><button class="lbtn" onclick="go('daily')">Kelola ↗</button></div>
@@ -429,48 +454,4 @@ function renderStock(act,fin){
       <div class="tcard"><div class="thead"><div class="ctitle">${IC.box}<span>Masih Ada (${act.length})</span></div></div>
         ${act.length?`<div class="tscroll"><table><thead><tr><th>Barang</th><th>Masuk</th><th>Perkiraan</th><th class="num">Aksi</th></tr></thead><tbody>
           ${act.map(i=>{const age=diff(i.in_date,today()),avg=avgLast(i.name),est=avg==null?`<span class="pill p-gry">Baru</span>`:(age>=avg?`<span class="pill p-amb">Segera habis</span>`:`<span class="pill p-grn">~${Math.round(avg-age)} hr lagi</span>`);
-            return `<tr><td class="tdm">${esc(i.name)} (${i.qty} ${esc(i.unit)})</td><td>${fmtS(i.in_date)} (${age} hr)</td><td>${est}</td><td class="num"><button class="bxs pri" onclick="markOut(${i.id},'${today()}')">Habis</button> <button class="bdel" onclick="delItem(${i.id})">Hapus</button></td></tr>`}).join('')}
-        </tbody></table></div>`:`<div class="empty">Belum ada stok aktif.</div>`}
-      </div>
-      <div class="tcard"><div class="thead"><div class="ctitle">${IC.list}<span>Sudah Habis (${fin.length})</span></div></div>
-        ${fin.length?`<div class="tscroll"><table><thead><tr><th>Barang</th><th>Periode</th><th>Durasi</th><th class="num">Aksi</th></tr></thead><tbody>
-          ${fin.slice(0,25).map(i=>`<tr><td class="tdm">${esc(i.name)}</td><td>${fmtS(i.in_date)} – ${fmtS(i.out_date)}</td><td><b>${diff(i.in_date,i.out_date)} hr</b></td><td class="num"><button class="bxs" onclick="markOut(${i.id},null)">Batal</button> <button class="bdel" onclick="delItem(${i.id})">Hapus</button></td></tr>`).join('')}
-        </tbody></table></div>`:`<div class="empty">Belum ada riwayat.</div>`}
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderHabits(list,shared){
-  const last7=[6,5,4,3,2,1,0].map(i=>addDays(today(),-i));
-  return `<div class="banner" style="padding:20px 24px"><h1>${shared?'Harian Bersama':'Tracker Punyaku'}</h1><p>${shared?'Kebiasaan bersama semua anggota rumah.':'Kebiasaan pribadi khusus akunmu.'}</p></div>
-  <div class="twocol">
-    <div class="card"><div class="chead"><div class="ctitle">${IC.plus}<span>Tambah Kebiasaan</span></div></div>
-      <div class="fld"><label>Nama</label><input id="h-name" placeholder="${shared?'Olahraga, jalan pagi':'Minum kreatin, baca buku'}"></div>
-      <div class="frow"><div class="fld"><label>Tipe</label><select id="h-kind"><option value="check">Ceklis</option><option value="count">Hitungan</option></select></div><div class="fld"><label>Target</label><input id="h-target" type="number" min="1" value="1"></div></div>
-      <div class="fld"><label>Satuan</label><input id="h-unit" placeholder="gelas, menit"></div>
-      <button class="bfull" onclick="addHabit(${shared})">Simpan Kebiasaan</button>
-    </div>
-    <div class="tcard"><div class="thead"><div class="ctitle">${IC.check}<span>Daftar (${list.length})</span></div></div>
-      ${list.length?`<div class="tscroll"><table><thead><tr><th>Kebiasaan</th><th>7 Hari</th><th>Streak</th><th class="num">Hari Ini</th></tr></thead><tbody>
-        ${list.map(h=>{const t=h.target||1,v=val(h,S.me,today()),ok=done(h,v),ot=S.logs.find(l=>l.habit_id===h.id&&l.email!==S.me&&l.date===today()),dots=last7.map(d=>`<span class="dot ${done(h,val(h,S.me,d))?'on':''}"></span>`).join('');
-          const ctl=h.kind==='count'?`<button class="bxs" onclick="setLog(${h.id},${Math.max(0,v-1)})">−</button> <b style="margin:0 4px">${v}/${t}</b> <button class="bxs pri" onclick="setLog(${h.id},${v+1})">+1</button>`:`<button class="bxs ${ok?'pri':''}" onclick="setLog(${h.id},${v?0:1})">${ok?'✓ Sudah':'Tandai'}</button>`;
-          return `<tr><td><div class="tdm">${esc(h.name)}</div>${ot&&shared?`<div class="tds">Pasangan: ${ot.value}${h.kind==='count'?'/'+t:''}</div>`:''}</td><td><div class="dots">${dots}</div></td><td><b>${streak(h)}</b> hr</td><td class="num">${ctl} <button class="bdel" onclick="delHabit(${h.id})">Hapus</button></td></tr>`}).join('')}
-      </tbody></table></div>`:`<div class="empty">Belum ada kebiasaan.</div>`}
-    </div>
-  </div>`;
-}
-
-function renderView(){
-  const sh=S.habits.filter(h=>h.owner==='*'),mine=S.habits.filter(h=>h.owner!=='*'),act=S.items.filter(i=>!i.out_date),fin=S.items.filter(i=>i.out_date);
-  renderNav(act.length,sh.length,mine.length);
-  if(tab==='home')$('#app').innerHTML=renderHome(sh,mine,act,fin);
-  if(tab==='stock')$('#app').innerHTML=renderStock(act,fin);
-  if(tab==='daily')$('#app').innerHTML=renderHabits(sh,true);
-  if(tab==='me')$('#app').innerHTML=renderHabits(mine,false);
-}
-
-load();
-</script>
-</body>
-</html>
+            return `<tr><td class="tdm">${esc(i.name)} (${i.qty} ${esc(i.unit)})</td><td>${fmtS(i.in_date)} (${age} hr)</td><td>${est}</td><td class="num"><button class="bxs pri" onclick="markOut(${i.id},'${today()}')">Habis</button> <button class="bdel" onclick="delItem(${i.id})">Hapus</button
