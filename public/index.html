@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tracker Rumah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eff3f5;--card:#fff;--ink:#10212b;--mut:#5d6f7a;--line:#dbe3e8;--acc:#1f5eff;--accsoft:#dbe6ff;--onacc:#fff;--warn:#8a5a00;--warnbg:#ffefc2;--ok:#127a52}
+@media(prefers-color-scheme:dark){:root{--bg:#0e171c;--card:#16232a;--ink:#e8eff2;--mut:#93a5af;--line:#26363f;--acc:#6f9bff;--accsoft:#1d3158;--onacc:#0b1530;--warn:#ffd27a;--warnbg:#3a2f12;--ok:#5fd6a2}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'DM Sans',system-ui,sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+main{max-width:620px;margin:0 auto;padding:18px 16px}
+h1{font:700 28px/1.15 'Bricolage Grotesque',system-ui,sans-serif;margin:6px 0 2px}
+h2{font:600 17px 'Bricolage Grotesque',system-ui,sans-serif;margin:26px 0 10px}
+.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:10px}.sp{flex:1;min-width:0}
+.bar{height:8px;background:var(--accsoft);border-radius:99px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .3s}
+button,input,select{font:inherit;color:var(--ink)}
+button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px;cursor:pointer;min-height:40px}
+button.p{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:700}
+button.x{border:0;background:none;color:var(--mut);padding:4px 8px;min-height:0;font-size:14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+input,select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;min-height:42px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.wide{grid-column:1/-1}
+.tag{display:inline-block;background:var(--accsoft);border-radius:99px;padding:2px 10px;font-size:13px;margin-top:6px}.tag.warn{background:var(--warnbg);color:var(--warn)}
+.dots{display:flex;gap:5px}.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line)}.dot.on{background:var(--ok);border-color:var(--ok)}
+.hero{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:var(--card);min-height:190px;margin:14px 0}
+.water{position:absolute;left:0;right:0;bottom:0;background:var(--accsoft);transition:height .6s}
+.water::before{content:"";position:absolute;left:0;right:0;top:-6px;height:12px;background:var(--accsoft);border-radius:50% 50% 0 0/100% 100% 0 0}
+.hero-in{position:relative;padding:18px;display:flex;flex-direction:column;gap:6px;min-height:190px}
+.big{font:700 56px/1 'Bricolage Grotesque',system-ui,sans-serif}.big small{font:500 18px 'DM Sans',sans-serif;color:var(--mut);margin-left:6px}
+.hero .row{margin-top:auto}.hero button{min-width:48px;font-size:20px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;border:0;background:none;border-radius:10px;color:var(--mut);padding:10px 4px}
+nav button.on{background:var(--accsoft);color:var(--ink);font-weight:700}
+.empty{color:var(--mut);padding:6px 2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"><p class="mut">Memuat...</p></main>
+<nav id="nav"></nav>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date().toLocaleDateString('sv-SE');
+const addDays=(d,n)=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return x.toLocaleDateString('sv-SE')};
+const diff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+const key=n=>n.trim().toLowerCase();
+let S={items:[],habits:[],logs:[],me:''},tab='home';
+
+async function api(m,p,b){
+  const r=await fetch('/api/'+p,{method:m,headers:{'content-type':'application/json'},body:b?JSON.stringify(b):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.error||'Gagal menyimpan');
+  return j;
+}
+window.onunhandledrejection=e=>alert(e.reason?.message||'Terjadi kesalahan');
+async function load(){
+  try{S=await api('GET','state');render()}
+  catch(e){$('#app').innerHTML=`<div class="card"><b>Data belum bisa dimuat</b><p class="mut">${esc(e.message)}</p></div>`}
+}
+
+/* Kebiasaan */
+const val=(h,e,d)=>S.logs.find(l=>l.habit_id===h.id&&l.email===e&&l.date===d)?.value||0;
+const done=(h,v)=>v>=(h.target||1);
+function streak(h){let d=today(),n=0;if(!done(h,val(h,S.me,d)))d=addDays(d,-1);while(done(h,val(h,S.me,d))){n++;d=addDays(d,-1)}return n}
+async function setLog(id,v){await api('POST','logs',{habit_id:id,date:today(),value:v});load()}
+async function addHabit(shared){
+  const name=$('#h-name').value.trim();if(!name)return;
+  await api('POST','habits',{name,kind:$('#h-kind').value,target:$('#h-target').value,unit:$('#h-unit').value,shared});load();
+}
+async function delHabit(id){if(confirm('Hapus kebiasaan ini beserta riwayatnya?')){await api('DELETE','habits/'+id);load()}}
+
+function habitCard(h){
+  const t=h.target||1,v=val(h,S.me,today());
+  const other=S.logs.find(l=>l.habit_id===h.id&&l.email!==S.me&&l.date===today());
+  const dots=[6,5,4,3,2,1,0].map(i=>{const d=addDays(today(),-i);return `<span class="dot ${done(h,val(h,S.me,d))?'on':''}" title="${fmt(d)}"></span>`}).join('');
+  const ctl=h.kind==='count'
+    ?`<button aria-label="Kurangi" onclick="setLog(${h.id},${Math.max(0,v-1)})">−</button><b>${v}/${t} ${esc(h.unit)}</b><button class="p" aria-label="Tambah" onclick="setLog(${h.id},${v+1})">+</button>`
+    :`<button class="${v?'p':''}" onclick="setLog(${h.id},${v?0:1})">${v?'Sudah':'Tandai selesai'}</button>`;
+  const sub=`Beruntun ${streak(h)} hari`+(other&&h.owner==='*'?`<br>Pasangan hari ini: ${other.value}${h.kind==='count'?'/'+t:''}`:'');
+  return `<div class="card"><div class="row"><div class="sp"><b>${esc(h.name)}</b><div class="mut">${sub}</div></div>${ctl}</div>
+  ${h.kind==='count'?`<div class="bar"><i style="width:${Math.min(100,v/t*100)}%"></i></div>`:''}
+  <div class="row" style="margin-top:10px"><div class="dots sp" aria-label="7 hari terakhir">${dots}</div><button class="x" onclick="delHabit(${h.id})">Hapus</button></div></div>`;
+}
+function miniHabit(h){
+  const t=h.target||1,v=val(h,S.me,today());
+  return `<div class="card" onclick="go('${h.owner==='*'?'daily':'me'}')"><div class="row"><b class="sp">${esc(h.name)}</b><span class="mut">${h.kind==='count'?v+'/'+t+' '+esc(h.unit):(v?'Sudah':'Belum')}</span></div><div class="bar"><i style="width:${Math.min(100,v/t*100)}%"></i></div></div>`;
+}
+const habitForm=shared=>`<div class="card"><div class="grid">
+  <input id="h-name" class="wide" placeholder="${shared?'Nama kebiasaan (misal olahraga)':'Nama kebiasaan (misal minum kreatin)'}">
+  <select id="h-kind"><option value="check">Ya atau tidak per hari</option><option value="count">Hitungan per hari</option></select>
+  <input id="h-target" type="number" min="1" value="1" aria-label="Target per hari">
+  <input id="h-unit" class="wide" placeholder="Satuan untuk hitungan (gelas, menit), boleh kosong"></div>
+  <button class="p" onclick="addHabit(${shared})">Tambah kebiasaan</button></div>`;
+
+/* Stok */
+function avgLast(name){const f=S.items.filter(i=>i.out_date&&key(i.name)===key(name));return f.length?f.reduce((s,i)=>s+diff(i.in_date,i.out_date),0)/f.length:null}
+async function addItem(){
+  const n=$('#in-name').value.trim();if(!n)return;
+  await api('POST','items',{name:n,qty:$('#in-qty').value,unit:$('#in-unit').value,in_date:$('#in-date').value||today(),note:$('#in-note').value});load();
+}
+async function markOut(id,d){await api('PATCH','items/'+id,{out_date:d});load()}
+async function delItem(id){if(confirm('Hapus catatan barang ini?')){await api('DELETE','items/'+id);load()}}
+function estimate(i){
+  const age=diff(i.in_date,today()),avg=avgLast(i.name);
+  if(avg==null)return '';
+  return age>=avg?`<span class="tag warn">Biasanya sudah habis sekitar sekarang</span>`:`<span class="tag">Perkiraan habis ${Math.round(avg-age)} hari lagi</span>`;
+}
+const itemCard=i=>`<div class="card"><div class="row"><div class="sp"><b>${esc(i.name)}</b> <span class="mut">${i.qty} ${esc(i.unit)}</span>
+  <div class="mut">Masuk ${fmt(i.in_date)}, sudah ${diff(i.in_date,today())} hari</div>${i.note?`<div class="mut">${esc(i.note)}</div>`:''}${estimate(i)}</div>
+  <button class="p" onclick="markOut(${i.id},'${today()}')">Habis</button></div></div>`;
+const finCard=i=>`<div class="card"><div class="row"><div class="sp"><b>${esc(i.name)}</b> <span class="mut">${i.qty} ${esc(i.unit)}</span>
+  <div class="mut">${fmt(i.in_date)} sampai ${fmt(i.out_date)}, bertahan ${diff(i.in_date,i.out_date)} hari</div></div>
+  <button class="x" onclick="markOut(${i.id},null)">Batalkan</button><button class="x" onclick="delItem(${i.id})">Hapus</button></div></div>`;
+
+/* Tampilan */
+const empty=t=>`<div class="empty">${t}</div>`;
+function go(t){tab=t;render();scrollTo(0,0)}
+function render(){
+  const sh=S.habits.filter(h=>h.owner==='*'),mine=S.habits.filter(h=>h.owner!=='*');
+  const act=S.items.filter(i=>!i.out_date),fin=S.items.filter(i=>i.out_date);
+  let h='';
+  if(tab==='home'){
+    h+=`<h1>Halo, ${esc(S.me.split('@')[0])}</h1><div class="mut">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})}</div>`;
+    const w=sh.find(x=>x.kind==='count');
+    if(w){const t=w.target||1,v=val(w,S.me,today());
+      h+=`<div class="hero"><div class="water" style="height:${Math.min(100,v/t*100)}%"></div><div class="hero-in"><div>${esc(w.name)} hari ini</div>
+      <div class="big">${v}<small>dari ${t} ${esc(w.unit)}</small></div>
+      <div class="row"><button aria-label="Kurangi" onclick="setLog(${w.id},${Math.max(0,v-1)})">−</button><button class="p" aria-label="Tambah" onclick="setLog(${w.id},${v+1})">+</button></div></div></div>`}
+    const rest=S.habits.filter(x=>x!==w);
+    h+=`<h2>Kebiasaan hari ini</h2>`+(rest.map(miniHabit).join('')||empty('Tambahkan kebiasaan di tab Harian atau Saya.'));
+    const al=act.filter(i=>{const a=avgLast(i.name);return a!=null&&diff(i.in_date,today())>=a*.85});
+    h+=`<h2>Stok yang perlu dicek</h2>`+(al.map(itemCard).join('')||`<div class="card mut">Belum ada barang yang mendekati habis. Ada ${act.length} barang tercatat masih tersedia.</div>`);
+  }
+  if(tab==='stock'){
+    h+=`<h1>Stok</h1><div class="mut">Catat kapan barang masuk dan kapan habis.</div><h2>Barang masuk</h2>
+    <div class="card"><div class="grid"><input id="in-name" class="wide" list="names" placeholder="Nama barang (galon, beras, telur)">
+    <input id="in-qty" type="number" step="any" min="0" value="1" aria-label="Jumlah"><input id="in-unit" placeholder="Satuan (buah, kg)">
+    <input id="in-date" class="wide" type="date" value="${today()}" aria-label="Tanggal masuk"><input id="in-note" class="wide" placeholder="Catatan, boleh kosong"></div>
+    <button class="p" onclick="addItem()">Catat barang masuk</button></div>
+    <datalist id="names">${[...new Set(S.items.map(i=>i.name))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
+    <h2>Masih ada (${act.length})</h2>${act.map(itemCard).join('')||empty('Belum ada stok. Catat barang yang baru masuk di atas.')}
+    <h2>Sudah habis</h2>${fin.slice(0,30).map(finCard).join('')||empty('Riwayat barang habis akan muncul di sini.')}`;
+  }
+  if(tab==='daily'){
+    h+=`<h1>Harian bersama</h1><div class="mut">Kebiasaan yang sama untuk semua orang. Catatanmu tetap terpisah.</div><h2>Hari ini</h2>`
+      +(sh.map(habitCard).join('')||empty('Belum ada.'))+`<h2>Tambah kebiasaan bersama</h2>`+habitForm(true);
+  }
+  if(tab==='me'){
+    h+=`<h1>Punyaku</h1><div class="mut">Hanya kamu yang melihat kebiasaan ini.</div><h2>Hari ini</h2>`
+      +(mine.map(habitCard).join('')||empty('Belum ada. Tambahkan misalnya minum kreatin di bawah.'))+`<h2>Tambah kebiasaan pribadi</h2>`+habitForm(false);
+  }
+  $('#app').innerHTML=h;
+  $('#nav').innerHTML=[['home','Beranda'],['stock','Stok'],['daily','Harian'],['me','Punyaku']]
+    .map(([k,l])=>`<button class="${tab===k?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+}
+load();
+</script>
+</body>
+</html>
