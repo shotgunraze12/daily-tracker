@@ -9,54 +9,384 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f8fafc;
-  --surface:#ffffff;
-  --surface-sub:#f1f5f9;
-  --ink:#0f172a;
-  --ink-2:#334155;
-  --mut:#64748b;
-  --mut-light:#94a3b8;
-  --line:#e2e8f0;
-  --line-soft:#f1f5f9;
-  --navy:#0f172a;
-  --navy-2:#1e293b;
-  --orange:#ea580c;
-  --orange-hover:#c2410c;
-  --orange-soft:#fff7ed;
-  --indigo:#4f46e5;
-  --indigo-soft:#eef2ff;
-  --sky:#0284c7;
-  --sky-soft:#f0f9ff;
-  --emerald:#059669;
-  --emerald-soft:#ecfdf5;
-  --amber:#d97706;
-  --amber-soft:#fffbeb;
-  --rose:#e11d48;
-  --rose-soft:#fff1f2;
-  --shadow-xs:0 1px 2px rgba(15,23,42,.04);
-  --shadow-sm:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --bg:#f8fafc;--card:#fff;--sub:#f1f5f9;--ink:#0f172a;--ink2:#334155;--mut:#64748b;--mut2:#94a3b8;
+  --line:#e2e8f0;--line2:#f1f5f9;--navy:#0f172a;--navy2:#1e293b;
+  --org:#ea580c;--org2:#c2410c;--org-bg:#fff7ed;
+  --ind:#4f46e5;--ind-bg:#eef2ff;--sky:#0284c7;--sky-bg:#f0f9ff;
+  --grn:#059669;--grn-bg:#ecfdf5;--amb:#d97706;--amb-bg:#fffbeb;--ros:#e11d48;--ros-bg:#fff1f2;
+  --sh:0 1px 2px rgba(15,23,42,.05);
 }
 *{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font:14px/1.5 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
-  -webkit-font-smoothing:antialiased;
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{display:flex;min-height:100vh}
+.side{width:244px;flex-shrink:0;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;padding:18px 14px;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.b-ico{width:34px;height:34px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;flex-shrink:0}
+.b-t{font-weight:700;font-size:15px;line-height:1.2}.b-s{font-size:11.5px;color:var(--mut)}
+.nsec{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mut2);padding:14px 10px 6px}
+.nbtn{width:100%;display:flex;align-items:center;gap:10px;padding:9px 12px;border:0;background:none;color:var(--ink2);font:500 13.5px/1.3 inherit;border-radius:10px;cursor:pointer;text-align:left;margin-bottom:2px}
+.nbtn svg{width:17px;height:17px;color:var(--mut);flex-shrink:0}
+.nbtn:hover{background:var(--sub);color:var(--ink)}
+.nbtn.on{background:var(--navy);color:#fff;font-weight:600}.nbtn.on svg{color:#fff}
+.nbadge{margin-left:auto;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;background:var(--sub);color:var(--mut)}
+.nbtn.on .nbadge{background:rgba(255,255,255,.18);color:#fff}
+.sfoot{margin-top:auto;padding:14px 6px 0;border-top:1px solid var(--line2);display:flex;align-items:center;gap:10px}
+.ava{width:34px;height:34px;border-radius:10px;background:var(--ind-bg);color:var(--ind);font-weight:700;font-size:13px;display:grid;place-items:center;text-transform:uppercase;flex-shrink:0}
+.main{flex:1;min-width:0;padding:24px 28px 48px}.wrap{max-width:1100px;margin:0 auto}
+.mbar{display:none;align-items:center;justify-content:space-between;background:var(--card);border-bottom:1px solid var(--line);padding:12px 16px;position:sticky;top:0;z-index:25}
+.mnav{display:none;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:30;gap:4px}
+.mnav button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-radius:10px;font:500 11px inherit;color:var(--mut);cursor:pointer}
+.mnav button.on{background:var(--navy);color:#fff;font-weight:600}.mnav svg{width:18px;height:18px}
+
+/* Banner & Clock Bar */
+.banner{background:linear-gradient(135deg,#0f172a 0%,#172554 55%,#1e293b 100%);border-radius:16px;padding:24px 28px;color:#fff;margin-bottom:16px;box-shadow:var(--sh)}
+.banner h1{margin:0 0 5px;font-size:22px;font-weight:700}.banner p{margin:0;color:#cbd5e1;font-size:13.5px}
+.sbar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:var(--sh);margin-bottom:18px;flex-wrap:wrap}
+.sbar h2{margin:0;font-size:16px;font-weight:700}.sbar .sub{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mut);margin-top:2px}
+.ctime{font-size:21px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15}
+.cdate{font-size:12.5px;color:var(--mut);margin-top:2px}
+.btn-org{background:var(--org);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:600 13.5px inherit;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.btn-org:hover{background:var(--org2)}
+
+/* Split Grid: Chart + 3 Stats */
+.split{display:grid;grid-template-columns:1.85fr 1fr;gap:16px;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--sh)}
+.chead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.ctitle{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px}.ctitle svg{width:17px;height:17px;color:var(--mut)}
+.lbtn{border:0;background:none;padding:4px 6px;font:600 12.5px inherit;color:var(--ind);cursor:pointer}
+.lbtn:hover{text-decoration:underline}
+.seg{display:inline-flex;background:var(--sub);border-radius:8px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:4px 10px;border-radius:6px;font:600 12px inherit;color:var(--mut);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+
+.sstack{display:flex;flex-direction:column;gap:12px}
+.scard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh);flex:1}
+.sico{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;flex-shrink:0}.sico svg{width:20px;height:20px}
+.i-ind{background:var(--ind-bg);color:var(--ind)}.i-org{background:var(--org-bg);color:var(--org)}.i-sky{background:var(--sky-bg);color:var(--sky)}.i-grn{background:var(--grn-bg);color:var(--grn)}
+.snum{font-size:22px;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums}.slbl{font-size:12.5px;color:var(--mut);margin-top:2px}
+
+/* Quick Access */
+.sech{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;margin:0 0 12px}.sech svg{width:16px;height:16px;color:var(--ind)}
+.qagrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.qacard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:var(--sh);cursor:pointer;text-align:left;display:flex;flex-direction:column}
+.qacard:hover{border-color:#cbd5e1;transform:translateY(-1px)}
+.qatop{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.qaico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center}.qaico svg{width:18px;height:18px}
+.qatitle{font-weight:700;font-size:13.5px;margin-bottom:2px}.qasub{font-size:12px;color:var(--mut)}
+
+/* Water Strip & Chart */
+.wstrip{background:var(--bg);border:1px solid var(--line2);border-radius:11px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wtrack{flex:1;min-width:110px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.wfill{height:100%;background:linear-gradient(90deg,#0284c7,#4f46e5);border-radius:99px;transition:width .3s}
+.cwrap{width:100%;overflow-x:auto}.cwrap svg{display:block;width:100%;height:auto}
+.cleg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mut);margin-top:10px;padding-top:10px;border-top:1px solid var(--line2)}
+.cleg span{display:inline-flex;align-items:center;gap:6px}.cleg i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+/* Tables */
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
+.thead{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;text-align:left}
+th{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);padding:11px 18px;border-bottom:1px solid var(--line);background:#fcfcfd;white-space:nowrap}
+td{padding:12px 18px;border-bottom:1px solid var(--line2);font-size:13.5px;color:var(--ink2);vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfd}
+.tdm{font-weight:600;color:var(--ink)}.tds{font-size:12px;color:var(--mut);margin-top:1px}.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.p-sky{background:var(--sky-bg);color:var(--sky)}.p-ind{background:var(--ind-bg);color:var(--ind)}.p-grn{background:var(--grn-bg);color:var(--grn)}
+.p-amb{background:var(--amb-bg);color:var(--amb)}.p-ros{background:var(--ros-bg);color:var(--ros)}.p-gry{background:var(--sub);color:var(--mut)}
+
+.dots{display:inline-flex;gap:4px}.dot{width:10px;height:10px;border-radius:3px;background:var(--line)}.dot.on{background:var(--grn)}
+.pbar{width:60px;height:6px;background:var(--sub);border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+.pbar i{display:block;height:100%;background:var(--ind);border-radius:99px}.pbar.grn i{background:var(--grn)}.pbar.amb i{background:var(--amb)}.pbar.ros i{background:var(--ros)}
+
+.bxs{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:7px;padding:4px 10px;font:600 12px inherit;cursor:pointer}
+.bxs:hover{background:var(--sub)}.bxs.pri{background:var(--navy);border-color:var(--navy);color:#fff}
+.bdel{border:0;background:none;color:var(--mut2);cursor:pointer;font-size:12px;padding:4px 8px;border-radius:6px}.bdel:hover{background:var(--ros-bg);color:var(--ros)}
+
+/* Subpages */
+.twocol{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
+.fld{margin-bottom:12px}.fld label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+input,select{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:9px 12px;font:13.5px inherit}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bfull{width:100%;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:600 13.5px inherit;cursor:pointer}
+.empty{padding:26px 18px;text-align:center;color:var(--mut);font-size:13.5px}
+
+@media(max-width:960px){.split,.twocol{grid-template-columns:1fr}.sstack{flex-direction:row}.qagrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.side{display:none}.mbar,.mnav{display:flex}.main{padding:16px 14px 84px}.sstack{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="mbar">
+  <div style="display:flex;align-items:center;gap:9px">
+    <div class="b-ico" style="width:30px;height:30px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg></div>
+    <b style="font-size:14px">Tracker Rumah</b>
+  </div>
+  <span id="muser" class="pill p-gry"></span>
+</div>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main"><div class="wrap" id="app"><div class="card"><div class="empty">Memuat dashboard...</div></div></div></main>
+</div>
+<nav class="mnav" id="mnav"></nav>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date().toLocaleDateString('sv-SE');
+const addDays=(d,n)=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return x.toLocaleDateString('sv-SE')};
+const diff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const fmtS=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+const fmtN=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'numeric'});
+const key=n=>n.trim().toLowerCase();
+
+let S={items:[],habits:[],logs:[],me:''}, tab='home', cDays=7, sTab='active';
+
+const IC={
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  flame:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  zap:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  drop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+};
+
+window.onerror=(m,u,l)=>{$('#app').innerHTML=`<div class="card"><b>Error Script</b><p style="color:var(--mut)">${esc(m)} (baris ${l})</p></div>`};
+window.onunhandledrejection=e=>alert(e.reason?.message||'Terjadi kesalahan');
+
+async function api(m,p,b){
+  const r=await fetch('/api/'+p,{method:m,headers:{'content-type':'application/json'},body:b?JSON.stringify(b):undefined});
+  const ct=r.headers.get('content-type')||'';
+  if(!ct.includes('application/json'))throw new Error('Sesi login habis atau API tidak merespons JSON. Coba refresh halaman.');
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'Gagal memproses permintaan');
+  return j;
 }
 
-/* App Shell */
-.shell{display:flex;min-height:100vh}
+async function load(){
+  try{
+    const d=await api('GET','state');
+    S={items:d.items||[],habits:d.habits||[],logs:d.logs||[],me:d.me||'user'};
+    render();
+  }catch(e){
+    $('#app').innerHTML=`<div class="card"><b>Data belum bisa dimuat</b><p style="color:var(--mut);margin:6px 0 12px">${esc(e.message)}</p><button class="bfull" style="width:auto" onclick="location.reload()">Muat Ulang</button></div>`;
+  }
+}
 
-/* Sidebar */
-.sidebar{
-  width:248px;
-  flex-shrink:0;
-  background:var(--surface);
-  border-right:1px solid var(--line);
-  display:flex;
-  flex-direction:column;
-  position:sticky;
-  top:0;
-  height:100vh;
-  padding
+const val=(h,e,d)=>S.logs.find(l=>l.habit_id===h.id&&l.email===e&&l.date===d)?.value||0;
+const done=(h,v)=>v>=(h.target||1);
+function streak(h){let d=today(),n=0;if(!done(h,val(h,S.me,d)))d=addDays(d,-1);while(done(h,val(h,S.me,d))){n++;d=addDays(d,-1)}return n}
+function avgLast(name){const f=S.items.filter(i=>i.out_date&&key(i.name)===key(name));return f.length?f.reduce((s,i)=>s+Math.max(1,diff(i.in_date,i.out_date)),0)/f.length:null}
+function greet(){const h=new Date().getHours();return h<11?'Selamat Pagi':h<15?'Selamat Siang':h<19?'Selamat Sore':'Selamat Malam'}
+function clockNow(){const n=new Date();return{t:n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),d:n.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}}
+setInterval(()=>{const a=$('#lt'),b=$('#ld');if(a&&b){const c=clockNow();a.textContent=c.t;b.textContent=c.d}},1000);
+
+async function setLog(id,v){await api('POST','logs',{habit_id:id,date:today(),value:v});load()}
+async function addHabit(shared){const name=$('#h-name').value.trim();if(!name)return;await api('POST','habits',{name,kind:$('#h-kind').value,target:$('#h-target').value,unit:$('#h-unit').value,shared});load()}
+async function delHabit(id){if(confirm('Hapus kebiasaan ini?')){await api('DELETE','habits/'+id);load()}}
+async function addItem(){const n=$('#in-name').value.trim();if(!n)return;await api('POST','items',{name:n,qty:$('#in-qty').value,unit:$('#in-unit').value,in_date:$('#in-date').value||today(),note:$('#in-note').value});load()}
+async function markOut(id,d){await api('PATCH','items/'+id,{out_date:d});load()}
+async function delItem(id){if(confirm('Hapus catatan barang ini?')){await api('DELETE','items/'+id);load()}}
+
+function go(t){tab=t;render();scrollTo(0,0)}
+function setDays(n){cDays=n;render()}
+function setSTab(t){sTab=t;render()}
+
+function renderNav(ac,sc,mc){
+  const u=S.me.split('@')[0];
+  $('#muser').textContent=u;
+  const nav=[['home','Dashboard',IC.grid,''],['stock','Stok Barang',IC.box,ac],['daily','Harian Bersama',IC.users,sc],['me','Punyaku',IC.user,mc]];
+  $('#side').innerHTML=`
+    <div class="brand"><div class="b-ico">${IC.home}</div><div><div class="b-t">Tracker Rumah</div><div class="b-s">Home & Habit Hub</div></div></div>
+    <div class="nsec">Main</div>
+    ${nav.map(([id,lbl,ic,bg])=>`<button class="nbtn ${tab===id?'on':''}" onclick="go('${id}')">${ic}<span>${lbl}</span>${bg!==''?`<span class="nbadge">${bg}</span>`:''}</button>`).join('')}
+    <div class="nsec">Quick Actions</div>
+    <button class="nbtn" onclick="go('stock')">${IC.plus}<span>Catat Barang Masuk</span></button>
+    <button class="nbtn" onclick="go('daily')">${IC.check}<span>Cek Kebiasaan</span></button>
+    <div class="sfoot"><div class="ava">${esc(u.slice(0,2))}</div><div style="min-width:0"><div style="font-weight:700;font-size:13px">${esc(u)}</div><div class="b-s">Anggota Rumah</div></div></div>`;
+  $('#mnav').innerHTML=nav.map(([id,lbl,ic])=>`<button class="${tab===id?'on':''}" onclick="go('${id}')">${ic}<span>${lbl.split(' ')[0]}</span></button>`).join('');
+}
+
+function renderChart(wHabit,days){
+  const dates=[...Array(days)].map((_,i)=>addDays(today(),-(days-1-i)));
+  const partner=wHabit?[...new Set(S.logs.filter(l=>l.habit_id===wHabit.id&&l.email!==S.me).map(l=>l.email))][0]:null;
+  const W=640,H=185,pL=36,pR=14,pT=16,pB=28,pW=W-pL-pR,pH=H-pT-pB,step=pW/days;
+  let grid='',bars='',lbls='';
+  [0,50,100].forEach(p=>{
+    const y=pT+pH-(p/100)*pH;
+    grid+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="#e2e8f0" stroke-dasharray="${p?'3 3':'0'}"/>
+           <text x="${pL-8}" y="${y+4}" text-anchor="end" fill="#94a3b8" font-size="10.5" font-weight="600">${p}%</text>`;
+  });
+  dates.forEach((d,i)=>{
+    const tot=S.habits.length||1, dMe=S.habits.filter(h=>done(h,val(h,S.me,d))).length, pMe=S.habits.length?Math.round(dMe/tot*100):0, isT=d===today();
+    if(partner){
+      const sh=S.habits.filter(h=>h.owner==='*'), dPt=sh.filter(h=>done(h,val(h,partner,d))).length, pPt=sh.length?Math.round(dPt/sh.length*100):0;
+      const bw=Math.max(4,Math.min(16,step*.32)), cx=pL+i*step+step/2, h1=pMe/100*pH, h2=pPt/100*pH;
+      bars+=`<g><title>${fmtS(d)} — Kamu: ${pMe}%, Pasangan: ${pPt}%</title>
+        <rect x="${(cx-bw-1.5).toFixed(1)}" y="${(pT+pH-h1).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(pMe?3:0,h1).toFixed(1)}" rx="4" fill="#4f46e5"/>
+        <rect x="${(cx+1.5).toFixed(1)}" y="${(pT+pH-h2).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(pPt?3:0,h2).toFixed(1)}" rx="4" fill="#38bdf8"/></g>`;
+    }else{
+      const bw=Math.max(5,Math.min(28,step*.56)), x=pL+i*step+(step-bw)/2, h1=pMe/100*pH, fill=pMe>=100?'#059669':(pMe>0?'#4f46e5':'#e2e8f0');
+      bars+=`<g><title>${fmtS(d)}: ${dMe}/${tot} (${pMe}%)</title>
+        <rect x="${x.toFixed(1)}" y="${(pT+pH-h1).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(pMe?3:2,h1).toFixed(1)}" rx="5" fill="${fill}"/>
+        ${days<=7&&pMe>0?`<text x="${(x+bw/2).toFixed(1)}" y="${(pT+pH-h1-5).toFixed(1)}" text-anchor="middle" fill="#334155" font-size="10.5" font-weight="700">${pMe}%</text>`:''}</g>`;
+    }
+    if(days<=7||i===0||i===days-1||i%5===0){
+      const t=days<=7?new Date(d+'T00:00:00').toLocaleDateString('id-ID',{weekday:'short'}):fmtN(d);
+      lbls+=`<text x="${(pL+i*step+step/2).toFixed(1)}" y="${H-6}" text-anchor="middle" fill="${isT?'#0f172a':'#94a3b8'}" font-size="11" font-weight="${isT?'700':'500'}">${t}</text>`;
+    }
+  });
+  return `<div class="cwrap"><svg viewBox="0 0 ${W} ${H}">${grid}${bars}${lbls}</svg></div>
+    <div class="cleg">${partner?`<span><i style="background:#4f46e5"></i>Kamu</span><span><i style="background:#38bdf8"></i>Pasangan (${esc(partner.split('@')[0])})</span>`:`<span><i style="background:#059669"></i>100% Tercapai</span><span><i style="background:#4f46e5"></i>Sebagian</span><span><i style="background:#e2e8f0"></i>Kosong</span>`}</div>`;
+}
+
+function renderHome(sh,mine,act,fin){
+  const u=S.me.split('@')[0], clk=clockNow(), totH=S.habits.length, doneT=S.habits.filter(h=>done(h,val(h,S.me,today()))).length;
+  const last7=[6,5,4,3,2,1,0].map(i=>addDays(today(),-i));
+  let cTot=totH*7, cDone=0; last7.forEach(d=>S.habits.forEach(h=>{if(done(h,val(h,S.me,d)))cDone++}));
+  const pct7=cTot?Math.round(cDone/cTot*100):0;
+  const low=act.filter(i=>{const a=avgLast(i.name);return a!=null&&diff(i.in_date,today())>=a*.8});
+  const w=sh.find(h=>h.kind==='count'), wV=w?val(w,S.me,today()):0, wT=w?(w.target||8):8;
+
+  const enAct=act.map(i=>{const age=diff(i.in_date,today()),avg=avgLast(i.name);return{...i,age,avg,rem:avg!=null?Math.round(avg-age):null,pct:avg?Math.min(100,Math.round(age/avg*100)):0}}).sort((a,b)=>(b.pct||0)-(a.pct||0));
+  const dStock=sTab==='low'?enAct.filter(i=>i.avg!=null&&i.age>=i.avg*.8):enAct;
+
+  return `
+    <div class="banner"><h1>${greet()}, ${esc(u)}!</h1><p>Pantau stok kebutuhan rumah, target minum harian, dan konsistensi kebiasaan dalam satu dashboard.</p></div>
+    <div class="sbar">
+      <div><h2>Halo, ${esc(u)}!</h2><div class="sub">${IC.clock}<span>Target hari ini: <b>${doneT}/${totH}</b> kebiasaan selesai</span></div></div>
+      <div><div class="ctime" id="lt">${clk.t}</div><div class="cdate" id="ld">${clk.d}</div></div>
+      <div>${w?`<button class="btn-org" onclick="setLog(${w.id},${wV+1})">${IC.drop}<span>+1 ${esc(w.name)} (${wV}/${wT})</span></button>`:`<button class="btn-org" onclick="go('stock')">${IC.plus}<span>Catat Stok</span></button>`}</div>
+    </div>
+
+    <div class="split">
+      <div class="card">
+        <div class="chead">
+          <div class="ctitle">${IC.chart}<span>Grafik Konsistensi Kebiasaan</span></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="seg"><button class="${cDays===7?'on':''}" onclick="setDays(7)">7 Hari</button><button class="${cDays===30?'on':''}" onclick="setDays(30)">30 Hari</button></div>
+            <button class="lbtn" onclick="go('daily')">Detail ↗</button>
+          </div>
+        </div>
+        ${w?`<div class="wstrip"><span class="pill p-sky">${esc(w.name)}</span><b>${wV}/${wT} ${esc(w.unit)}</b><div class="wtrack"><div class="wfill" style="width:${Math.min(100,wV/wT*100)}%"></div></div><div style="display:flex;gap:6px"><button class="bxs" onclick="setLog(${w.id},${Math.max(0,wV-1)})">−</button><button class="bxs pri" onclick="setLog(${w.id},${wV+1})">+1</button></div></div>`:''}
+        ${S.habits.length?renderChart(w,cDays):'<div class="empty">Belum ada kebiasaan untuk ditampilkan di grafik.</div>'}
+      </div>
+      <div class="sstack">
+        <div class="scard"><div class="sico i-ind">${IC.check}</div><div><div class="snum">${doneT}/${totH}</div><div class="slbl">Kebiasaan Hari Ini</div></div></div>
+        <div class="scard"><div class="sico i-org">${IC.flame}</div><div><div class="snum">${pct7}%</div><div class="slbl">Konsistensi 7 Hari</div></div></div>
+        <div class="scard"><div class="sico i-sky">${IC.box}</div><div><div class="snum">${act.length}</div><div class="slbl">Stok Aktif ${low.length?`(${low.length} perlu cek)`:'(Semua aman)'}</div></div></div>
+      </div>
+    </div>
+
+    <div class="sech">${IC.zap}<span>Quick Access</span></div>
+    <div class="qagrid">
+      <button class="qacard" onclick="${w?`setLog(${w.id},${wV+1})`:`go('daily')`}"><div class="qatop"><div class="qaico i-sky">${IC.drop}</div><span style="color:var(--mut2)">→</span></div><div class="qatitle">${w?`Tambah ${esc(w.name)}`:'Kebiasaan'}</div><div class="qasub">${w?`${wV}/${wT} ${esc(w.unit)} hari ini`:'Kelola target'}</div></button>
+      <button class="qacard" onclick="go('stock')"><div class="qatop"><div class="qaico i-ind">${IC.box}</div><span style="color:var(--mut2)">→</span></div><div class="qatitle">Catat Stok Masuk</div><div class="qasub">Galon, beras, telur</div></button>
+      <button class="qacard" onclick="go('daily')"><div class="qatop"><div class="qaico i-org">${IC.users}</div><span style="color:var(--mut2)">→</span></div><div class="qatitle">Harian Bersama</div><div class="qasub">${sh.length} kebiasaan</div></button>
+      <button class="qacard" onclick="go('me')"><div class="qatop"><div class="qaico i-grn">${IC.user}</div><span style="color:var(--mut2)">→</span></div><div class="qatitle">Tracker Punyaku</div><div class="qasub">${mine.length} kebiasaan</div></button>
+    </div>
+
+    <div class="tcard">
+      <div class="thead"><div class="ctitle">${IC.list}<span>Ringkasan Kebiasaan Harian</span></div><button class="lbtn" onclick="go('daily')">Kelola ↗</button></div>
+      ${S.habits.length?`<div class="tscroll"><table><thead><tr><th>Kebiasaan</th><th>Kategori</th><th>7 Hari</th><th>Streak</th><th class="num">Hari Ini</th></tr></thead><tbody>
+        ${S.habits.map(h=>{
+          const t=h.target||1,v=val(h,S.me,today()),ok=done(h,v);
+          const dots=last7.map(d=>`<span class="dot ${done(h,val(h,S.me,d))?'on':''}"></span>`).join('');
+          const ctl=h.kind==='count'?`<button class="bxs" onclick="setLog(${h.id},${Math.max(0,v-1)})">−</button> <b style="margin:0 4px">${v}/${t}</b> <button class="bxs pri" onclick="setLog(${h.id},${v+1})">+1</button>`:`<button class="bxs ${ok?'pri':''}" onclick="setLog(${h.id},${v?0:1})">${ok?'✓ Selesai':'Tandai'}</button>`;
+          return `<tr><td><div class="tdm">${esc(h.name)}</div>${h.unit?`<div class="tds">Target ${t} ${esc(h.unit)}</div>`:''}</td><td>${h.owner==='*'?`<span class="pill p-sky">Bersama</span>`:`<span class="pill p-ind">Pribadi</span>`}</td><td><div class="dots">${dots}</div></td><td><b>${streak(h)}</b> hr</td><td class="num">${ctl}</td></tr>`;
+        }).join('')}
+      </tbody></table></div>`:`<div class="empty">Belum ada kebiasaan tercatat.</div>`}
+    </div>
+
+    <div class="tcard">
+      <div class="thead">
+        <div class="ctitle">${IC.box}<span>Monitoring Stok & Siklus Pemakaian</span></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="seg"><button class="${sTab==='active'?'on':''}" onclick="setSTab('active')">Aktif (${act.length})</button><button class="${sTab==='low'?'on':''}" onclick="setSTab('low')">Perlu Cek (${low.length})</button><button class="${sTab==='hist'?'on':''}" onclick="setSTab('hist')">Statistik (${fin.length})</button></div>
+          <button class="lbtn" onclick="go('stock')">+ Tambah ↗</button>
+        </div>
+      </div>
+      ${sTab==='hist'?renderHist(fin):(dStock.length?`<div class="tscroll"><table><thead><tr><th>Barang</th><th>Masuk</th><th>Siklus</th><th>Rata-rata</th><th>Status</th><th class="num">Aksi</th></tr></thead><tbody>
+        ${dStock.map(i=>{
+          let bg=`<span class="pill p-gry">Baru</span>`,bc='';
+          if(i.avg!=null){if(i.rem<=0){bg=`<span class="pill p-ros">Waktunya beli</span>`;bc='ros'}else if(i.age>=i.avg*.8){bg=`<span class="pill p-amb">Sisa ~${i.rem} hr</span>`;bc='amb'}else{bg=`<span class="pill p-grn">Aman (~${i.rem} hr)</span>`;bc='grn'}}
+          return `<tr><td><div class="tdm">${esc(i.name)} <span style="color:var(--mut);font-weight:400">(${i.qty} ${esc(i.unit)})</span></div>${i.note?`<div class="tds">${esc(i.note)}</div>`:''}</td><td>${fmtS(i.in_date)}<div class="tds">${i.age} hari</div></td><td>${i.avg!=null?`<span class="pbar ${bc}"><i style="width:${i.pct}%"></i></span><span class="tds">${i.pct}%</span>`:`<span class="tds">—</span>`}</td><td>${i.avg!=null?`~${Math.round(i.avg)} hr`:'—'}</td><td>${bg}</td><td class="num"><button class="bxs" onclick="markOut(${i.id},'${today()}')">Habis</button></td></tr>`;
+        }).join('')}
+      </tbody></table></div>`:`<div class="empty">${sTab==='low'?'Tidak ada stok mendekati habis.':'Belum ada stok aktif.'}</div>`)}
+    </div>`;
+}
+
+function renderHist(fin){
+  if(!fin.length)return `<div class="empty">Belum ada riwayat barang habis.</div>`;
+  const g={};fin.forEach(i=>{const k=key(i.name);if(!g[k])g[k]={n:i.name,d:[]};g[k].d.push(Math.max(1,diff(i.in_date,i.out_date)))});
+  const rows=Object.values(g).map(x=>({n:x.n,c:x.d.length,avg:x.d.reduce((a,b)=>a+b,0)/x.d.length,min:Math.min(...x.d),max:Math.max(...x.d)})).sort((a,b)=>a.avg-b.avg);
+  return `<div class="tscroll"><table><thead><tr><th>Barang</th><th>Siklus</th><th>Rata-rata Habis</th><th class="num">Tercepat – Terlama</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td class="tdm">${esc(r.n)}</td><td><span class="pill p-ind">${r.c}×</span></td><td><b>${r.avg.toFixed(1)} hari</b></td><td class="num">${r.min} – ${r.max} hr</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderStock(act,fin){
+  return `<div class="banner" style="padding:20px 24px"><h1>Stok Barang Rumah</h1><p>Catat barang masuk dan tandai saat habis untuk prediksi otomatis.</p></div>
+  <div class="twocol">
+    <div class="card"><div class="chead"><div class="ctitle">${IC.plus}<span>Barang Masuk</span></div></div>
+      <div class="fld"><label>Nama Barang</label><input id="in-name" list="names" placeholder="Galon, beras, telur"><datalist id="names">${[...new Set(S.items.map(i=>i.name))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist></div>
+      <div class="frow"><div class="fld"><label>Jumlah</label><input id="in-qty" type="number" step="any" min="0" value="1"></div><div class="fld"><label>Satuan</label><input id="in-unit" placeholder="galon, kg"></div></div>
+      <div class="fld"><label>Tanggal Masuk</label><input id="in-date" type="date" value="${today()}"></div>
+      <div class="fld"><label>Catatan</label><input id="in-note" placeholder="Opsional"></div>
+      <button class="bfull" onclick="addItem()">Simpan Barang</button>
+    </div>
+    <div>
+      <div class="tcard"><div class="thead"><div class="ctitle">${IC.box}<span>Masih Ada (${act.length})</span></div></div>
+        ${act.length?`<div class="tscroll"><table><thead><tr><th>Barang</th><th>Masuk</th><th>Perkiraan</th><th class="num">Aksi</th></tr></thead><tbody>
+          ${act.map(i=>{const age=diff(i.in_date,today()),avg=avgLast(i.name),est=avg==null?`<span class="pill p-gry">Baru</span>`:(age>=avg?`<span class="pill p-amb">Segera habis</span>`:`<span class="pill p-grn">~${Math.round(avg-age)} hr lagi</span>`);
+            return `<tr><td class="tdm">${esc(i.name)} (${i.qty} ${esc(i.unit)})</td><td>${fmtS(i.in_date)} (${age} hr)</td><td>${est}</td><td class="num"><button class="bxs pri" onclick="markOut(${i.id},'${today()}')">Habis</button> <button class="bdel" onclick="delItem(${i.id})">Hapus</button></td></tr>`}).join('')}
+        </tbody></table></div>`:`<div class="empty">Belum ada stok aktif.</div>`}
+      </div>
+      <div class="tcard"><div class="thead"><div class="ctitle">${IC.list}<span>Sudah Habis (${fin.length})</span></div></div>
+        ${fin.length?`<div class="tscroll"><table><thead><tr><th>Barang</th><th>Periode</th><th>Durasi</th><th class="num">Aksi</th></tr></thead><tbody>
+          ${fin.slice(0,25).map(i=>`<tr><td class="tdm">${esc(i.name)}</td><td>${fmtS(i.in_date)} – ${fmtS(i.out_date)}</td><td><b>${diff(i.in_date,i.out_date)} hr</b></td><td class="num"><button class="bxs" onclick="markOut(${i.id},null)">Batal</button> <button class="bdel" onclick="delItem(${i.id})">Hapus</button></td></tr>`).join('')}
+        </tbody></table></div>`:`<div class="empty">Belum ada riwayat.</div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHabits(list,shared){
+  const last7=[6,5,4,3,2,1,0].map(i=>addDays(today(),-i));
+  return `<div class="banner" style="padding:20px 24px"><h1>${shared?'Harian Bersama':'Tracker Punyaku'}</h1><p>${shared?'Kebiasaan bersama semua anggota rumah.':'Kebiasaan pribadi khusus akunmu.'}</p></div>
+  <div class="twocol">
+    <div class="card"><div class="chead"><div class="ctitle">${IC.plus}<span>Tambah Kebiasaan</span></div></div>
+      <div class="fld"><label>Nama</label><input id="h-name" placeholder="${shared?'Olahraga, jalan pagi':'Minum kreatin, baca buku'}"></div>
+      <div class="frow"><div class="fld"><label>Tipe</label><select id="h-kind"><option value="check">Ceklis</option><option value="count">Hitungan</option></select></div><div class="fld"><label>Target</label><input id="h-target" type="number" min="1" value="1"></div></div>
+      <div class="fld"><label>Satuan</label><input id="h-unit" placeholder="gelas, menit"></div>
+      <button class="bfull" onclick="addHabit(${shared})">Simpan Kebiasaan</button>
+    </div>
+    <div class="tcard"><div class="thead"><div class="ctitle">${IC.check}<span>Daftar (${list.length})</span></div></div>
+      ${list.length?`<div class="tscroll"><table><thead><tr><th>Kebiasaan</th><th>7 Hari</th><th>Streak</th><th class="num">Hari Ini</th></tr></thead><tbody>
+        ${list.map(h=>{const t=h.target||1,v=val(h,S.me,today()),ok=done(h,v),ot=S.logs.find(l=>l.habit_id===h.id&&l.email!==S.me&&l.date===today()),dots=last7.map(d=>`<span class="dot ${done(h,val(h,S.me,d))?'on':''}"></span>`).join('');
+          const ctl=h.kind==='count'?`<button class="bxs" onclick="setLog(${h.id},${Math.max(0,v-1)})">−</button> <b style="margin:0 4px">${v}/${t}</b> <button class="bxs pri" onclick="setLog(${h.id},${v+1})">+1</button>`:`<button class="bxs ${ok?'pri':''}" onclick="setLog(${h.id},${v?0:1})">${ok?'✓ Sudah':'Tandai'}</button>`;
+          return `<tr><td><div class="tdm">${esc(h.name)}</div>${ot&&shared?`<div class="tds">Pasangan: ${ot.value}${h.kind==='count'?'/'+t:''}</div>`:''}</td><td><div class="dots">${dots}</div></td><td><b>${streak(h)}</b> hr</td><td class="num">${ctl} <button class="bdel" onclick="delHabit(${h.id})">Hapus</button></td></tr>`}).join('')}
+      </tbody></table></div>`:`<div class="empty">Belum ada kebiasaan.</div>`}
+    </div>
+  </div>`;
+}
+
+function render(){
+  const sh=S.habits.filter(h=>h.owner==='*'),mine=S.habits.filter(h=>h.owner!=='*'),act=S.items.filter(i=>!i.out_date),fin=S.items.filter(i=>i.out_date);
+  renderNav(act.length,sh.length,mine.length);
+  if(tab==='home')$('#app').innerHTML=renderHome(sh,mine,act,fin);
+  if(tab==='stock')$('#app').innerHTML=renderStock(act,fin);
+  if(tab==='daily')$('#app').innerHTML=renderHabits(sh,true);
+  if(tab==='me')$('#app').innerHTML=renderHabits(mine,false);
+}
+load();
+</script>
+</body>
+</html>
