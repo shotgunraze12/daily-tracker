@@ -1,5 +1,6 @@
 // Backend: Cloudflare Pages Function + D1 (binding: DB)
-// Login menggunakan Email + PIN dari Environment Variable: USERS="email@kamu.com:123456"
+// Login Email + PIN: USERS="email@kamu.com:123456"
+// Webhook Hevy / Apple Health: WEBHOOK_SECRET="rahasia-shortcut-123"
 
 const json = (d, s = 200, headers = {}) =>
   new Response(JSON.stringify(d), {
@@ -58,13 +59,84 @@ async function verifyToken(token, secret) {
   }
 }
 
+function cleanNum(v) {
+  const n = parseFloat(String(v ?? '0').replace(',', '.').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(n) ? Math.round(n) : 0;
+}
+
+function cleanDate(v) {
+  const s = String(v || '').trim();
+  const m = s.match(/(\d{4}-\d{2}-\d{2})/);
+  if (m) return m[1];
+  const d = new Date(s);
+  if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  return new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+async function ensureWorkoutsTable(db) {
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS workouts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL,
+        date TEXT NOT NULL,
+        title TEXT NOT NULL,
+        duration_min INTEGER DEFAULT 0,
+        calories INTEGER DEFAULT 0,
+        source TEXT DEFAULT 'Hevy',
+        ext_id TEXT NOT NULL,
+        UNIQUE(email, ext_id)
+      )`
+    )
+    .run();
+}
+
 export async function onRequest({ request, env, params }) {
   const users = parseUsers(env.USERS);
-  const secret = env.AUTH_SECRET || `tr-secret-${env.USERS || 'default'}`;
-  const isHttps = new URL(request.url).protocol === 'https:';
-  const [res, id] = [].concat(params.path || []);
-  const method = request.method;
-  const body = method === 'POST' || method === 'PATCH' ? await request.json().catch(() => ({})) : {};
+  const secret = env.AUTH_SECRET || `tr-secret-${env.USERS \vert{}\vert{} 'default'}`; const isHttps = new URL(request.url).protocol === 'https:'; const [res, id] = [].concat(params.path \vert{}\vert{} []); const method = request.method; const body = method === 'POST' \vert{}\vert{} method === 'PATCH' ? await request.json().catch(() => ({})) : {}; const db = env.DB;  // 0. Webhook Apple Health / iOS Shortcuts: POST /api/workout-sync if (res === 'workout-sync' && method === 'POST') { const authHdr = (request.headers.get('Authorization') \vert{}\vert{} '').replace(/^Bearer\s+/i, '').trim(); const urlToken = new URL(request.url).searchParams.get('token') \vert{}\vert{} ''; const token = authHdr \vert{}\vert{} urlToken \vert{}\vert{} String(body.token \vert{}\vert{} '').trim(); const expectedSecret = String(env.WEBHOOK_SECRET \vert{}\vert{} '').trim();  if (!expectedSecret) { return json({ error: 'Variabel WEBHOOK_SECRET belum diatur di Cloudflare.' }, 500); } if (!token \vert{}\vert{} token !== expectedSecret) { return json({ error: 'Token webhook tidak valid.' }, 401); }  const email = String(body.email \vert{}\vert{} '').trim().toLowerCase(); if (!email \vert{}\vert{} !users.has(email)) { return json({ error: 'Email tidak terdaftar di USERS.' }, 400); }  const date = cleanDate(body.date); const title = String(body.title \vert{}\vert{} 'Strength Training').trim() \vert{}\vert{} 'Strength Training'; const durationMin = cleanNum(body.duration_min ?? body.duration); const calories = cleanNum(body.calories); const source = String(body.source \vert{}\vert{} 'Hevy').trim() \vert{}\vert{} 'Hevy'; const startTime = String(body.start_time \vert{}\vert{} '').trim(); const extId = startTime ? `${date}_${startTime}` : `${date}_${title.toLowerCase()}_${durationMin}`;
+
+    try {
+      await ensureWorkoutsTable(db);
+      await db
+        .prepare(
+          `INSERT INTO workouts (email, date, title, duration_min, calories, source, ext_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(email, ext_id) DO UPDATE SET
+             title = excluded.title,
+             duration_min = excluded.duration_min,
+             calories = excluded.calories,
+             source = excluded.source`
+        )
+        .bind(email, date, title, durationMin, calories, source, extId)
+        .run();
+
+      // Otomatis centang kebiasaan olahraga/workout/gym jika ada
+      const matchedHabits = (
+        await db
+          .prepare(
+            `SELECT id, kind, target FROM habits
+             WHERE owner IN ('*', ?)
+               AND (LOWER(name) LIKE '%olahraga%' OR LOWER(name) LIKE '%workout%' OR LOWER(name) LIKE '%gym%' OR LOWER(name) LIKE '%latihan%')`
+          )
+          .bind(email)
+          .all()
+      ).results;
+
+      for (const h of matchedHabits) {
+        const val = h.kind === 'count' ? Math.max(h.target || 1, durationMin || 1) : 1;
+        await db
+          .prepare(
+            'INSERT INTO logs (habit_id, email, date, value) VALUES (?,?,?,?) ON CONFLICT(habit_id, email, date) DO UPDATE SET value = excluded.value'
+          )
+          .bind(h.id, email, date, val)
+          .run();
+      }
+
+      return json({ ok: true, synced: { email, date, title, duration_min: durationMin, calories }, auto_checked: matchedHabits.length });
+    } catch (e) {
+      return json({ error: 'Gagal menyimpan data olahraga.' }, 500);
+    }
+  }
 
   // 1. Login: POST /api/login
   if (res === 'login' && method === 'POST') {
@@ -80,29 +152,22 @@ export async function onRequest({ request, env, params }) {
       return json({ error: 'Email atau PIN salah.' }, 401);
     }
 
-    const exp = Date.now() + 30 * 24 * 60 * 60 * 1000; // Sesi berlaku 30 hari
+    const exp = Date.now() + 30 * 24 * 60 * 60 * 1000;
     const token = await signToken({ email, exp }, secret);
-    const cookie = `tr_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 86400}${isHttps ? '; Secure' : ''}`;
-    return json({ ok: true, me: email }, 200, { 'Set-Cookie': cookie });
-  }
-
-  // 2. Logout: POST /api/logout
-  if (res === 'logout' && method === 'POST') {
-    const cookie = `tr_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${isHttps ? '; Secure' : ''}`;
+    const cookie = `tr_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 86400}${isHttps ? '; Secure' : ''}`; return json({ ok: true, me: email }, 200, { 'Set-Cookie': cookie }); }  // 2. Logout: POST /api/logout if (res === 'logout' && method === 'POST') { const cookie = `tr_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${isHttps ? '; Secure' : ''}`;
     return json({ ok: true }, 200, { 'Set-Cookie': cookie });
   }
 
-  // 3. Validasi sesi untuk semua request data
+  // 3. Validasi sesi
   const session = await verifyToken(getCookie(request, 'tr_session'), secret);
   const email = session?.email || '';
   if (!email || !users.has(email)) {
     return json({ error: 'Silakan login terlebih dahulu.' }, 401);
   }
 
-  const db = env.DB;
-
   try {
     if (res === 'state' && method === 'GET') {
+      await ensureWorkoutsTable(db);
       const since = new Date(Date.now() - 40 * 864e5).toISOString().slice(0, 10);
       const items = (await db.prepare('SELECT * FROM items ORDER BY in_date DESC, id DESC LIMIT 500').all()).results;
       const habits = (await db.prepare("SELECT * FROM habits WHERE owner IN ('*', ?) ORDER BY id").bind(email).all()).results;
@@ -114,7 +179,13 @@ export async function onRequest({ request, env, params }) {
           .bind(since, email)
           .all()
       ).results;
-      return json({ me: email, items, habits, logs });
+      const workouts = (await db.prepare('SELECT * FROM workouts ORDER BY date DESC, id DESC LIMIT 30').all()).results;
+      return json({ me: email, items, habits, logs, workouts });
+    }
+
+    if (res === 'workouts' && id && method === 'DELETE') {
+      await db.prepare('DELETE FROM workouts WHERE id = ?').bind(Number(id)).run();
+      return json({ ok: true });
     }
 
     if (res === 'items' && method === 'POST') {
