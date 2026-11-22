@@ -1,6 +1,6 @@
 // Backend: Cloudflare Pages Function + D1 (binding: DB)
-// Login Email + PIN: USERS="email@kamu.com:123456"
-// Webhook Hevy / Apple Health: WEBHOOK_SECRET="rahasia-shortcut-123"
+// Login Email + PIN: USERS="ariiramaadhan@gmail.com:060125"
+// Webhook Hevy / Apple Health: WEBHOOK_SECRET="hevy-apps"
 
 const json = (d, s = 200, headers = {}) =>
   new Response(JSON.stringify(d), {
@@ -37,7 +37,7 @@ async function signToken(payload, secret) {
   const data = btoa(String.fromCharCode(...bytes));
   const sigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(data));
   const sig = btoa(String.fromCharCode(...new Uint8Array(sigBuf)));
-  return `${data}.${sig}`;
+  return data + '.' + sig;
 }
 
 async function verifyToken(token, secret) {
@@ -93,153 +93,32 @@ async function ensureWorkoutsTable(db) {
 
 export async function onRequest({ request, env, params }) {
   const users = parseUsers(env.USERS);
-  const secret = env.AUTH_SECRET || `tr-secret-${env.USERS \vert{}\vert{} 'default'}`; const isHttps = new URL(request.url).protocol === 'https:'; const [res, id] = [].concat(params.path \vert{}\vert{} []); const method = request.method; const body = method === 'POST' \vert{}\vert{} method === 'PATCH' ? await request.json().catch(() => ({})) : {}; const db = env.DB;  // 0. Webhook Apple Health / iOS Shortcuts: POST /api/workout-sync if (res === 'workout-sync' && method === 'POST') { const authHdr = (request.headers.get('Authorization') \vert{}\vert{} '').replace(/^Bearer\s+/i, '').trim(); const urlToken = new URL(request.url).searchParams.get('token') \vert{}\vert{} ''; const token = authHdr \vert{}\vert{} urlToken \vert{}\vert{} String(body.token \vert{}\vert{} '').trim(); const expectedSecret = String(env.WEBHOOK_SECRET \vert{}\vert{} '').trim();  if (!expectedSecret) { return json({ error: 'Variabel WEBHOOK_SECRET belum diatur di Cloudflare.' }, 500); } if (!token \vert{}\vert{} token !== expectedSecret) { return json({ error: 'Token webhook tidak valid.' }, 401); }  const email = String(body.email \vert{}\vert{} '').trim().toLowerCase(); if (!email \vert{}\vert{} !users.has(email)) { return json({ error: 'Email tidak terdaftar di USERS.' }, 400); }  const date = cleanDate(body.date); const title = String(body.title \vert{}\vert{} 'Strength Training').trim() \vert{}\vert{} 'Strength Training'; const durationMin = cleanNum(body.duration_min ?? body.duration); const calories = cleanNum(body.calories); const source = String(body.source \vert{}\vert{} 'Hevy').trim() \vert{}\vert{} 'Hevy'; const startTime = String(body.start_time \vert{}\vert{} '').trim(); const extId = startTime ? `${date}_${startTime}` : `${date}_${title.toLowerCase()}_${durationMin}`;
+  const rawUsers = env.USERS || 'default';
+  const secret = env.AUTH_SECRET || ('tr-secret-' + rawUsers);
+  const isHttps = new URL(request.url).protocol === 'https:';
+  const secureFlag = isHttps ? '; Secure' : '';
+  const [res, id] = [].concat(params.path || []);
+  const method = request.method;
+  const body = method === 'POST' || method === 'PATCH' ? await request.json().catch(() => ({})) : {};
+  const db = env.DB;
 
-    try {
-      await ensureWorkoutsTable(db);
-      await db
-        .prepare(
-          `INSERT INTO workouts (email, date, title, duration_min, calories, source, ext_id)
-           VALUES (?, ?, ?, ?, ?, ?, ?)
-           ON CONFLICT(email, ext_id) DO UPDATE SET
-             title = excluded.title,
-             duration_min = excluded.duration_min,
-             calories = excluded.calories,
-             source = excluded.source`
-        )
-        .bind(email, date, title, durationMin, calories, source, extId)
-        .run();
+  // 0. Webhook Apple Health / iOS Shortcuts: POST /api/workout-sync
+  if (res === 'workout-sync' && method === 'POST') {
+    const authHdr = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim();
+    const urlToken = new URL(request.url).searchParams.get('token') || '';
+    const token = authHdr || urlToken || String(body.token || '').trim();
+    const expectedSecret = String(env.WEBHOOK_SECRET || '').trim();
 
-      // Otomatis centang kebiasaan olahraga/workout/gym jika ada
-      const matchedHabits = (
-        await db
-          .prepare(
-            `SELECT id, kind, target FROM habits
-             WHERE owner IN ('*', ?)
-               AND (LOWER(name) LIKE '%olahraga%' OR LOWER(name) LIKE '%workout%' OR LOWER(name) LIKE '%gym%' OR LOWER(name) LIKE '%latihan%')`
-          )
-          .bind(email)
-          .all()
-      ).results;
-
-      for (const h of matchedHabits) {
-        const val = h.kind === 'count' ? Math.max(h.target || 1, durationMin || 1) : 1;
-        await db
-          .prepare(
-            'INSERT INTO logs (habit_id, email, date, value) VALUES (?,?,?,?) ON CONFLICT(habit_id, email, date) DO UPDATE SET value = excluded.value'
-          )
-          .bind(h.id, email, date, val)
-          .run();
-      }
-
-      return json({ ok: true, synced: { email, date, title, duration_min: durationMin, calories }, auto_checked: matchedHabits.length });
-    } catch (e) {
-      return json({ error: 'Gagal menyimpan data olahraga.' }, 500);
+    if (!expectedSecret) {
+      return json({ error: 'Variabel WEBHOOK_SECRET belum diatur di Cloudflare.' }, 500);
     }
-  }
-
-  // 1. Login: POST /api/login
-  if (res === 'login' && method === 'POST') {
-    if (!users.size) {
-      return json({ error: 'Variabel USERS belum diatur di Cloudflare Pages Settings.' }, 500);
-    }
-    const email = (body.email || '').trim().toLowerCase();
-    const pin = String(body.pin || '').trim();
-    if (!email || !pin) return json({ error: 'Email dan PIN wajib diisi.' }, 400);
-
-    const expectedPin = users.get(email);
-    if (!expectedPin || expectedPin !== pin) {
-      return json({ error: 'Email atau PIN salah.' }, 401);
+    if (!token || token !== expectedSecret) {
+      return json({ error: 'Token webhook tidak valid.' }, 401);
     }
 
-    const exp = Date.now() + 30 * 24 * 60 * 60 * 1000;
-    const token = await signToken({ email, exp }, secret);
-    const cookie = `tr_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 86400}${isHttps ? '; Secure' : ''}`; return json({ ok: true, me: email }, 200, { 'Set-Cookie': cookie }); }  // 2. Logout: POST /api/logout if (res === 'logout' && method === 'POST') { const cookie = `tr_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${isHttps ? '; Secure' : ''}`;
-    return json({ ok: true }, 200, { 'Set-Cookie': cookie });
-  }
-
-  // 3. Validasi sesi
-  const session = await verifyToken(getCookie(request, 'tr_session'), secret);
-  const email = session?.email || '';
-  if (!email || !users.has(email)) {
-    return json({ error: 'Silakan login terlebih dahulu.' }, 401);
-  }
-
-  try {
-    if (res === 'state' && method === 'GET') {
-      await ensureWorkoutsTable(db);
-      const since = new Date(Date.now() - 40 * 864e5).toISOString().slice(0, 10);
-      const items = (await db.prepare('SELECT * FROM items ORDER BY in_date DESC, id DESC LIMIT 500').all()).results;
-      const habits = (await db.prepare("SELECT * FROM habits WHERE owner IN ('*', ?) ORDER BY id").bind(email).all()).results;
-      const logs = (
-        await db
-          .prepare(
-            "SELECT l.habit_id, l.email, l.date, l.value FROM logs l JOIN habits h ON h.id = l.habit_id WHERE l.date >= ? AND (h.owner = '*' OR l.email = ?)"
-          )
-          .bind(since, email)
-          .all()
-      ).results;
-      const workouts = (await db.prepare('SELECT * FROM workouts ORDER BY date DESC, id DESC LIMIT 30').all()).results;
-      return json({ me: email, items, habits, logs, workouts });
+    const email = String(body.email || '').trim().toLowerCase();
+    if (!email || !users.has(email)) {
+      return json({ error: 'Email tidak terdaftar di USERS.' }, 400);
     }
 
-    if (res === 'workouts' && id && method === 'DELETE') {
-      await db.prepare('DELETE FROM workouts WHERE id = ?').bind(Number(id)).run();
-      return json({ ok: true });
-    }
-
-    if (res === 'items' && method === 'POST') {
-      const name = (body.name || '').trim();
-      if (!name) return json({ error: 'Nama barang wajib diisi.' }, 400);
-      await db
-        .prepare('INSERT INTO items (name, unit, qty, in_date, note, created_by) VALUES (?,?,?,?,?,?)')
-        .bind(name, (body.unit || '').trim(), Number(body.qty) || 1, body.in_date, (body.note || '').trim(), email)
-        .run();
-      return json({ ok: true });
-    }
-    if (res === 'items' && id && method === 'PATCH') {
-      await db.prepare('UPDATE items SET out_date = ? WHERE id = ?').bind(body.out_date || null, Number(id)).run();
-      return json({ ok: true });
-    }
-    if (res === 'items' && id && method === 'DELETE') {
-      await db.prepare('DELETE FROM items WHERE id = ?').bind(Number(id)).run();
-      return json({ ok: true });
-    }
-
-    if (res === 'habits' && method === 'POST') {
-      const name = (body.name || '').trim();
-      if (!name) return json({ error: 'Nama wajib diisi.' }, 400);
-      const kind = body.kind === 'count' ? 'count' : 'check';
-      await db
-        .prepare('INSERT INTO habits (owner, name, kind, target, unit) VALUES (?,?,?,?,?)')
-        .bind(body.shared ? '*' : email, name, kind, kind === 'count' ? Number(body.target) || 1 : 1, (body.unit || '').trim())
-        .run();
-      return json({ ok: true });
-    }
-    if (res === 'habits' && id && method === 'DELETE') {
-      const h = await db.prepare("SELECT id FROM habits WHERE id = ? AND owner IN ('*', ?)").bind(Number(id), email).first();
-      if (!h) return json({ error: 'Tidak ditemukan.' }, 404);
-      await db.batch([
-        db.prepare('DELETE FROM logs WHERE habit_id = ?').bind(Number(id)),
-        db.prepare('DELETE FROM habits WHERE id = ?').bind(Number(id)),
-      ]);
-      return json({ ok: true });
-    }
-
-    if (res === 'logs' && method === 'POST') {
-      const h = await db.prepare("SELECT id FROM habits WHERE id = ? AND owner IN ('*', ?)").bind(Number(body.habit_id), email).first();
-      if (!h) return json({ error: 'Kebiasaan tidak ditemukan.' }, 404);
-      await db
-        .prepare(
-          'INSERT INTO logs (habit_id, email, date, value) VALUES (?,?,?,?) ON CONFLICT(habit_id, email, date) DO UPDATE SET value = excluded.value'
-        )
-        .bind(h.id, email, body.date, Math.max(0, Number(body.value) || 0))
-        .run();
-      return json({ ok: true });
-    }
-
-    return json({ error: 'Tidak ditemukan.' }, 404);
-  } catch (e) {
-    return json({ error: 'Terjadi kesalahan di server.' }, 500);
-  }
-}
+    const date = cleanDate(
