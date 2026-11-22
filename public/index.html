@@ -52,4 +52,275 @@ button,input,select{font:inherit;color:var(--ink)}
 button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px;cursor:pointer;min-height:40px}
 button.p{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:700}
 button.x{border:0;background:none;color:var(--mut);padding:4px 8px;min-height:0;font-size:14px}
-button:focus-vi
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+input,select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;min-height:42px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.wide{grid-column:1/-1}
+.tag{display:inline-block;background:var(--accsoft);border-radius:99px;padding:2px 10px;font-size:13px;margin-top:6px}
+.tag.warn{background:var(--warnbg);color:var(--warn)}
+.dots{display:flex;gap:5px}.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line)}.dot.on{background:var(--ok);border-color:var(--ok)}
+.empty{color:var(--mut);padding:6px 2px}
+.ph{margin:4px 0 18px}
+
+/* beranda */
+.hero{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(120deg,var(--h1),var(--h2));color:#fff;margin-bottom:14px}
+.water{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.1);transition:height .7s}
+.water::before{content:"";position:absolute;left:0;right:0;top:-7px;height:14px;background:rgba(255,255,255,.1);border-radius:50% 50% 0 0/100% 100% 0 0}
+.hero-in{position:relative;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;padding:24px}
+.hero p{color:rgba(255,255,255,.78);margin:8px 0 0;max-width:36ch}
+.big{font-size:54px;line-height:1;font-weight:700}.big small{font:500 17px 'DM Sans',sans-serif;opacity:.75;margin-left:6px}
+.hero .row{margin-top:10px}
+.hero button{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28);min-width:48px;font-size:20px}
+.hero button.lt{background:#fff;color:#0c2926;border-color:#fff}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:6px}
+.stat{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.ic{width:42px;height:42px;border-radius:12px;background:var(--accsoft);display:grid;place-items:center}
+.stat.w .ic{background:var(--warnbg);color:var(--warn)}
+.stat b{font:700 24px/1.1 'Bricolage Grotesque',sans-serif;display:block}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0 22px}
+.qa{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px;border-radius:16px}
+.qa .ic{margin-bottom:6px}.qa b{font-size:16px}
+.cols{display:grid;gap:0 18px}
+.cols>section{min-width:0}
+.cards2{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0 10px}
+@media(min-width:860px){.cols{grid-template-columns:3fr 2fr}.cols.rev{grid-template-columns:2fr 3fr}.cols.rev>section:first-child{position:sticky;top:24px;align-self:start}}
+.plot{position:relative;display:flex;gap:6px;height:120px;margin-top:16px}
+.tl{position:absolute;left:0;right:0;border-top:1px dashed var(--mut);opacity:.6}
+.cbs{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;height:100%}
+.cb{display:block;width:42%;max-width:20px;min-height:3px;border-radius:6px 6px 2px 2px}
+.cb.me,.sw.me{background:var(--acc)}.cb.ot,.sw.ot{background:var(--accsoft);border:1px solid var(--acc)}
+.lbls{display:flex;gap:6px;margin-top:6px}.lbls span{flex:1;text-align:center;font-size:13px;color:var(--mut)}
+.lg{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mut)}.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.tw{overflow-x:auto;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-weight:500;color:var(--mut);text-align:left;padding:6px;white-space:nowrap}
+td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:middle}
+.rc th:not(:first-child),.rc td:not(:first-child){text-align:center}
+.rc .dot{display:inline-block}
+.hb{display:flex;align-items:center;gap:10px;margin-top:10px}.hb .bar{margin:0}.hn{width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hb b{width:56px;text-align:right;font-size:14px}
+.auth .side,.auth #bottom-nav{display:none!important}
+.auth .shell{display:block!important}
+.auth main{max-width:440px}
+.duo{display:grid;gap:10px;margin-bottom:6px}
+.mobonly{margin-top:18px}
+@media(min-width:860px){.duo{grid-template-columns:1fr 1fr}.mobonly{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="logo" id="logo"></span><div><b>Tracker Rumah</b><div class="mut">Catatan harian berdua</div></div></div>
+    <div id="side-nav"></div>
+    <div class="me"><span class="av" id="av"></span><div class="sp"><b id="me-name"></b><div class="mut" id="me-mail"></div></div>
+      <button class="x" title="Keluar" aria-label="Keluar" id="out" onclick="logout()"></button></div>
+  </aside>
+  <main id="app"><p class="mut">Memuat...</p></main>
+</div>
+<nav id="bottom-nav"></nav>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date().toLocaleDateString('sv-SE');
+const addDays=(d,n)=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return x.toLocaleDateString('sv-SE')};
+const diff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+const key=n=>n.trim().toLowerCase();
+const ICONS={home:'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',box:'M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8',droplet:'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z',user:'M20 21v-1a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v1M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',check:'M20 6L9 17l-5-5',alert:'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',out:'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',plus:'M12 5v14M5 12h14',activity:'M22 12h-4l-3 9L9 3l-3 9H2'};
+const icon=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`;
+const NAV=[['Utama',[['home','Beranda','home'],['stock','Stok','box']]],['Kebiasaan',[['daily','Harian bersama','droplet'],['me','Punyaku','user']]],['Kesehatan',[['workout','Olahraga','activity']]]];
+let S={items:[],habits:[],logs:[],workouts:[],me:''},tab='home';
+
+async function api(m,p,b){
+  const r=await fetch('/api/'+p,{method:m,headers:{'content-type':'application/json'},body:b?JSON.stringify(b):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const err=new Error(j.error||'Gagal menyimpan');err.status=r.status;throw err}
+  return j;
+}
+window.onunhandledrejection=e=>alert(e.reason?.message||'Terjadi kesalahan');
+async function load(){
+  try{S=await api('GET','state');document.body.classList.remove('auth');render()}
+  catch(e){if(e.status===401)return renderLogin();$('#app').innerHTML=`<div class="card"><b>Data belum bisa dimuat</b><p class="mut">${esc(e.message)}</p></div>`}
+}
+
+/* Login */
+function renderLogin(msg){
+  document.body.classList.add('auth');
+  $('#app').innerHTML=`<div class="card" style="margin-top:8vh"><div class="row" style="margin-bottom:16px"><span class="logo">${icon('droplet',22)}</span><div><h1 style="font-size:22px">Tracker Rumah</h1><div class="mut">Masuk dengan email dan PIN</div></div></div>
+  <div class="grid" style="grid-template-columns:1fr"><input id="lg-email" type="email" autocomplete="username" placeholder="Email"><input id="lg-pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN"></div>
+  <button class="p" style="width:100%" onclick="doLogin()">Masuk</button>${msg?`<p style="color:var(--warn);margin:12px 0 0">${esc(msg)}</p>`:''}</div>`;
+  ['#lg-email','#lg-pin'].forEach(q=>$(q).onkeydown=e=>{if(e.key==='Enter')doLogin()});
+}
+async function doLogin(){
+  try{await api('POST','login',{email:$('#lg-email').value.trim(),pin:$('#lg-pin').value.trim()});await load()}
+  catch(e){renderLogin(e.message)}
+}
+async function logout(){await api('POST','logout').catch(()=>{});S={items:[],habits:[],logs:[],workouts:[],me:''};renderLogin()}
+
+/* Kebiasaan */
+const val=(h,e,d)=>S.logs.find(l=>l.habit_id===h.id&&l.email===e&&l.date===d)?.value||0;
+const done=(h,v)=>v>=(h.target||1);
+function streak(h){let d=today(),n=0;if(!done(h,val(h,S.me,d)))d=addDays(d,-1);while(done(h,val(h,S.me,d))){n++;d=addDays(d,-1)}return n}
+async function setLog(id,v){await api('POST','logs',{habit_id:id,date:today(),value:v});load()}
+async function addHabit(shared){
+  const name=$('#h-name').value.trim();if(!name)return;
+  await api('POST','habits',{name,kind:$('#h-kind').value,target:$('#h-target').value,unit:$('#h-unit').value,shared});load();
+}
+async function delHabit(id){if(confirm('Hapus kebiasaan ini beserta riwayatnya?')){await api('DELETE','habits/'+id);load()}}
+
+function habitCard(h){
+  const t=h.target||1,v=val(h,S.me,today());
+  const other=S.logs.find(l=>l.habit_id===h.id&&l.email!==S.me&&l.date===today());
+  const dots=[6,5,4,3,2,1,0].map(i=>{const d=addDays(today(),-i);return `<span class="dot ${done(h,val(h,S.me,d))?'on':''}" title="${fmt(d)}"></span>`}).join('');
+  const ctl=h.kind==='count'
+    ?`<button aria-label="Kurangi" onclick="setLog(${h.id},${Math.max(0,v-1)})">−</button><b>${v}/${t} ${esc(h.unit)}</b><button class="p" aria-label="Tambah" onclick="setLog(${h.id},${v+1})">+</button>`
+    :`<button class="${v?'p':''}" onclick="setLog(${h.id},${v?0:1})">${v?'Sudah':'Tandai selesai'}</button>`;
+  const sub=`Beruntun ${streak(h)} hari`+(other&&h.owner==='*'?`<br>Pasangan hari ini: ${other.value}${h.kind==='count'?'/'+t:''}`:'');
+  return `<div class="card"><div class="row"><div class="sp"><b>${esc(h.name)}</b><div class="mut">${sub}</div></div>${ctl}</div>
+  ${h.kind==='count'?`<div class="bar"><i style="width:${Math.min(100,v/t*100)}%"></i></div>`:''}
+  <div class="row" style="margin-top:10px"><div class="dots sp" aria-label="7 hari terakhir">${dots}</div><button class="x" onclick="delHabit(${h.id})">Hapus</button></div></div>`;
+}
+const habitForm=shared=>`<div class="card"><div class="grid">
+  <input id="h-name" class="wide" placeholder="${shared?'Nama kebiasaan (misal olahraga)':'Nama kebiasaan (misal minum kreatin)'}">
+  <select id="h-kind"><option value="check">Ya atau tidak per hari</option><option value="count">Hitungan per hari</option></select>
+  <input id="h-target" type="number" min="1" value="1" aria-label="Target per hari">
+  <input id="h-unit" class="wide" placeholder="Satuan untuk hitungan (gelas, menit), boleh kosong"></div>
+  <button class="p" onclick="addHabit(${shared})">Tambah kebiasaan</button></div>`;
+
+/* Stok */
+function avgLast(name){const f=S.items.filter(i=>i.out_date&&key(i.name)===key(name));return f.length?f.reduce((s,i)=>s+diff(i.in_date,i.out_date),0)/f.length:null}
+async function addItem(){
+  const n=$('#in-name').value.trim();if(!n)return;
+  await api('POST','items',{name:n,qty:$('#in-qty').value,unit:$('#in-unit').value,in_date:$('#in-date').value||today(),note:$('#in-note').value});load();
+}
+async function markOut(id,d){await api('PATCH','items/'+id,{out_date:d});load()}
+async function delItem(id){if(confirm('Hapus catatan barang ini?')){await api('DELETE','items/'+id);load()}}
+function estimate(i){
+  const age=diff(i.in_date,today()),avg=avgLast(i.name);
+  if(avg==null)return '';
+  return age>=avg?`<span class="tag warn">Biasanya sudah habis sekitar sekarang</span>`:`<span class="tag">Perkiraan habis ${Math.round(avg-age)} hari lagi</span>`;
+}
+const itemCard=i=>`<div class="card"><div class="row"><div class="sp"><b>${esc(i.name)}</b> <span class="mut">${i.qty} ${esc(i.unit)}</span>
+  <div class="mut">Masuk ${fmt(i.in_date)}, sudah ${diff(i.in_date,today())} hari</div>${i.note?`<div class="mut">${esc(i.note)}</div>`:''}${estimate(i)}</div>
+  <button class="p" onclick="markOut(${i.id},'${today()}')">Habis</button></div></div>`;
+const finCard=i=>`<div class="card"><div class="row"><div class="sp"><b>${esc(i.name)}</b> <span class="mut">${i.qty} ${esc(i.unit)}</span>
+  <div class="mut">${fmt(i.in_date)} sampai ${fmt(i.out_date)}, bertahan ${diff(i.in_date,i.out_date)} hari</div></div>
+  <button class="x" onclick="markOut(${i.id},null)">Batalkan</button><button class="x" onclick="delItem(${i.id})">Hapus</button></div></div>`;
+
+/* Tampilan */
+const empty=t=>`<div class="empty">${t}</div>`;
+const stat=(ic,num,label,w)=>`<div class="stat ${w?'w':''}"><span class="ic">${icon(ic,22)}</span><div><b>${num}</b><span class="mut">${label}</span></div></div>`;
+const dayLbl=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{weekday:'short'});
+const last7=()=>[6,5,4,3,2,1,0].map(i=>addDays(today(),-i));
+function waterChart(w){
+  const t=w.target||1,days=last7();
+  const partner=S.logs.find(l=>l.habit_id===w.id&&l.email!==S.me)?.email;
+  const max=Math.max(t,...days.flatMap(d=>[val(w,S.me,d),partner?val(w,partner,d):0]));
+  const bar=(v,c)=>`<i class="cb ${c}" style="height:${v/max*100}%" title="${v}"></i>`;
+  const cols=days.map(d=>`<div class="cbs">${bar(val(w,S.me,d),'me')}${partner?bar(val(w,partner,d),'ot'):''}</div>`).join('');
+  return `<div class="card"><div class="row"><b class="sp">${esc(w.name)} 7 hari terakhir</b><span class="lg"><i class="sw me"></i>Kamu${partner?' <i class="sw ot"></i>Pasangan':''}</span></div>
+  <div class="plot"><i class="tl" style="bottom:${t/max*100}%"></i>${cols}</div>
+  <div class="lbls">${days.map(d=>`<span>${dayLbl(d)}</span>`).join('')}</div>
+  <div class="mut" style="margin-top:8px">Garis putus-putus menandai target ${t} ${esc(w.unit)}.</div></div>`;
+}
+function recap(){
+  const days=last7();
+  const rows=S.habits.map(h=>`<tr><td>${esc(h.name)}${h.owner==='*'?'':' <span class="mut">(pribadi)</span>'}</td>${days.map(d=>`<td><span class="dot ${done(h,val(h,S.me,d))?'on':''}" title="${fmt(d)}"></span></td>`).join('')}<td>${streak(h)} hari</td></tr>`).join('');
+  if(!rows)return '';
+  return `<div class="card"><b>Rekap kebiasaan 7 hari</b><div class="tw"><table class="rc"><thead><tr><th></th>${days.map(d=>`<th>${dayLbl(d)}</th>`).join('')}<th>Beruntun</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function stockTable(act){
+  if(!act.length)return `<div class="card mut">Belum ada stok tercatat. Mulai dari tab Stok.</div>`;
+  const rows=act.slice(0,12).map(i=>{
+    const age=diff(i.in_date,today()),avg=avgLast(i.name);
+    const st=avg==null?'<span class="mut">Belum ada data</span>':age>=avg?'<span class="tag warn" style="margin:0">Sekitar habis</span>':`<span class="mut">sekitar ${Math.round(avg-age)} hari lagi</span>`;
+    return `<tr><td><b>${esc(i.name)}</b><div class="mut">${i.qty} ${esc(i.unit)}</div></td><td>${fmt(i.in_date)}</td><td>${age} hari</td><td>${st}</td><td><button class="x" onclick="markOut(${i.id},'${today()}')">Habis</button></td></tr>`}).join('');
+  return `<div class="card"><b>Stok sekarang (${act.length})</b><div class="tw"><table><thead><tr><th>Barang</th><th>Masuk</th><th>Umur</th><th>Perkiraan</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function lastChart(){
+  const g={};
+  S.items.filter(i=>i.out_date).forEach(i=>{const k=key(i.name);(g[k]||(g[k]={n:i.name,d:[]})).d.push(diff(i.in_date,i.out_date))});
+  const rows=Object.values(g).map(x=>({n:x.n,a:x.d.reduce((s,v)=>s+v,0)/x.d.length})).sort((a,b)=>b.a-a.a).slice(0,6);
+  if(!rows.length)return `<div class="card mut">Setelah ada barang yang ditandai habis, rata-rata daya tahannya muncul di sini.</div>`;
+  const m=Math.max(...rows.map(r=>r.a),1);
+  return `<div class="card"><b>Rata-rata barang bertahan</b>${rows.map(r=>`<div class="hb"><span class="hn">${esc(r.n)}</span><div class="bar sp"><i style="width:${r.a/m*100}%"></i></div><b>${r.a.toFixed(1)} hari</b></div>`).join('')}</div>`;
+}
+const wmin=(e,d)=>(S.workouts||[]).filter(w=>w.email===e&&w.date===d).reduce((s,w)=>s+(+w.duration_min||0),0);
+async function delWorkout(id){if(confirm('Hapus catatan olahraga ini?')){await api('DELETE','workouts/'+id);load()}}
+function workoutChart(){
+  const days=last7(),partner=(S.workouts||[]).find(w=>w.email!==S.me)?.email;
+  const max=Math.max(30,...days.flatMap(d=>[wmin(S.me,d),partner?wmin(partner,d):0]));
+  const bar=(v,c)=>`<i class="cb ${c}" style="height:${v/max*100}%" title="${v} menit"></i>`;
+  const cols=days.map(d=>`<div class="cbs">${bar(wmin(S.me,d),'me')}${partner?bar(wmin(partner,d),'ot'):''}</div>`).join('');
+  const tot=days.reduce((s,d)=>s+wmin(S.me,d),0),n=days.filter(d=>wmin(S.me,d)>0).length;
+  return `<div class="card"><div class="row"><b class="sp">Olahraga 7 hari terakhir</b><span class="lg"><i class="sw me"></i>Kamu${partner?' <i class="sw ot"></i>Pasangan':''}</span></div>
+  <div class="plot">${cols}</div><div class="lbls">${days.map(d=>`<span>${dayLbl(d)}</span>`).join('')}</div>
+  <div class="mut" style="margin-top:8px">${(S.workouts||[]).length?`${n} hari latihan, total ${tot} menit (batang dalam menit).`:'Belum ada data. Latihan dari Hevy akan muncul otomatis.'}</div></div>`;
+}
+function workoutTable(){
+  const ws=S.workouts||[];
+  if(!ws.length)return `<div class="card mut">Belum ada data olahraga. Selesaikan latihan di Hevy dan datanya akan muncul di sini.</div>`;
+  const rows=ws.map(w=>`<tr><td>${fmt(w.date)}</td><td><b>${esc(w.title)}</b><div class="mut">${w.email===S.me?'Kamu':'Pasangan'}, ${esc(w.source)}</div></td><td>${w.duration_min||0} mnt</td><td>${w.calories||0} kkal</td><td>${w.email===S.me?`<button class="x" onclick="delWorkout(${w.id})">Hapus</button>`:''}</td></tr>`).join('');
+  return `<div class="card"><div class="tw"><table><thead><tr><th>Tanggal</th><th>Latihan</th><th>Durasi</th><th>Kalori</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function go(t){tab=t;render();scrollTo(0,0)}
+function goAdd(){go('stock');setTimeout(()=>$('#in-name')?.focus(),60)}
+function nav(){
+  $('#side-nav').innerHTML=NAV.map(([g,items])=>`<div class="grp">${g}</div>`+items.map(([k,l,ic])=>`<button class="sl ${tab===k?'on':''}" onclick="go('${k}')">${icon(ic)}<span>${l}</span></button>`).join('')).join('');
+  $('#bottom-nav').innerHTML=NAV.flatMap(([,items])=>items).map(([k,l,ic])=>`<button class="bl ${tab===k?'on':''}" onclick="go('${k}')">${icon(ic)}<span>${l.split(' ')[0]}</span></button>`).join('');
+}
+function render(){
+  const sh=S.habits.filter(h=>h.owner==='*'),mine=S.habits.filter(h=>h.owner!=='*');
+  const act=S.items.filter(i=>!i.out_date),fin=S.items.filter(i=>i.out_date);
+  const al=act.filter(i=>{const a=avgLast(i.name);return a!=null&&diff(i.in_date,today())>=a*.85});
+  const name=S.me.split('@')[0],Name=name?name[0].toUpperCase()+name.slice(1):'';
+  $('#logo').innerHTML=icon('droplet',22);$('#out').innerHTML=icon('out',18);
+  $('#av').textContent=(Name[0]||'?');$('#me-name').textContent=Name;$('#me-mail').textContent=S.me;
+  let h='';
+  if(tab==='home'){
+    const w=sh.find(x=>x.kind==='count');
+    const wkDays=last7().filter(d=>wmin(S.me,d)>0).length;
+    const nDone=S.habits.filter(x=>done(x,val(x,S.me,today()))).length;
+    const hr=new Date().getHours(),sal=hr<11?'Selamat pagi':hr<15?'Selamat siang':hr<18?'Selamat sore':'Selamat malam';
+    const sum=`${nDone} dari ${S.habits.length} kebiasaan selesai hari ini. ${al.length?al.length+' barang perlu dicek.':'Stok masih aman.'}`;
+    let glass='',pct=0;
+    if(w){const t=w.target||1,v=val(w,S.me,today());pct=Math.min(100,v/t*100);
+      glass=`<div><div>${esc(w.name)} hari ini</div><div class="big">${v}<small>dari ${t} ${esc(w.unit)}</small></div>
+      <div class="row"><button aria-label="Kurangi" onclick="setLog(${w.id},${Math.max(0,v-1)})">−</button><button class="lt" aria-label="Tambah" onclick="setLog(${w.id},${v+1})">+</button></div></div>`}
+    h+=`<section class="hero"><div class="water" style="height:${Math.max(6,pct)}%"></div><div class="hero-in"><div><h1>${sal}, ${esc(Name)}</h1><p>${sum}</p></div>${glass}</div></section>
+    <div class="duo">${w?waterChart(w):''}${workoutChart()}</div>
+    <div class="stats">${stat('box',act.length,'Stok tersedia')}${stat('alert',al.length,'Perlu dicek',al.length>0)}${stat('check',nDone+'/'+S.habits.length,'Kebiasaan hari ini')}${stat('activity',wkDays+' hari','Latihan minggu ini')}</div>
+    <div class="cols"><section><h2>Rekap minggu ini</h2>${recap()}</section>
+    <section><h2>Stok</h2>${stockTable(act)}${lastChart()}</section></div>
+    <div class="mobonly"><button onclick="logout()">Keluar (${esc(S.me)})</button></div>`;
+  }
+  if(tab==='stock'){
+    h+=`<div class="ph"><h1>Stok</h1><div class="mut">Catat kapan barang masuk dan kapan habis.</div></div>
+    <div class="cols rev"><section><h2>Barang masuk</h2><div class="card"><div class="grid"><input id="in-name" class="wide" list="names" placeholder="Nama barang (galon, beras, telur)">
+    <input id="in-qty" type="number" step="any" min="0" value="1" aria-label="Jumlah"><input id="in-unit" placeholder="Satuan (buah, kg)">
+    <input id="in-date" class="wide" type="date" value="${today()}" aria-label="Tanggal masuk"><input id="in-note" class="wide" placeholder="Catatan, boleh kosong"></div>
+    <button class="p" onclick="addItem()">Catat barang masuk</button></div>
+    <datalist id="names">${[...new Set(S.items.map(i=>i.name))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist></section>
+    <section><h2>Masih ada (${act.length})</h2>${act.map(itemCard).join('')||empty('Belum ada stok. Catat barang yang baru masuk.')}
+    <h2 style="margin-top:22px">Sudah habis</h2>${fin.slice(0,30).map(finCard).join('')||empty('Riwayat barang habis akan muncul di sini.')}</section></div>`;
+  }
+  if(tab==='daily'){
+    h+=`<div class="ph"><h1>Harian bersama</h1><div class="mut">Kebiasaan yang sama untuk semua orang. Catatanmu tetap terpisah.</div></div>
+    <div class="cards2">${sh.map(habitCard).join('')||empty('Belum ada.')}</div><h2 style="margin-top:14px">Tambah kebiasaan bersama</h2><div style="max-width:460px">${habitForm(true)}</div>`;
+  }
+  if(tab==='me'){
+    h+=`<div class="ph"><h1>Punyaku</h1><div class="mut">Hanya kamu yang melihat kebiasaan ini.</div></div>
+    <div class="cards2">${mine.map(habitCard).join('')||empty('Belum ada. Tambahkan misalnya minum kreatin di bawah.')}</div><h2 style="margin-top:14px">Tambah kebiasaan pribadi</h2><div style="max-width:460px">${habitForm(false)}</div>`;
+  }
+  if(tab==='workout'){
+    const inWk=(S.workouts||[]).filter(w=>w.email===S.me&&last7().includes(w.date));
+    const tm=inWk.reduce((s,w)=>s+(+w.duration_min||0),0),tc=inWk.reduce((s,w)=>s+(+w.calories||0),0);
+    h+=`<div class="ph"><h1>Olahraga</h1><div class="mut">Data masuk otomatis dari Hevy lewat webhook.</div></div>
+    <div class="stats">${stat('activity',new Set(inWk.map(w=>w.date)).size+' hari','Latihan 7 hari')}${stat('activity',tm+' menit','Total durasi')}${stat('activity',tc+' kkal','Kalori dari Hevy')}</div>
+    <div class="duo" style="margin-top:10px">${workoutChart()}</div><h2>Riwayat latihan</h2>${workoutTable()}`;
+  }
+  $('#app').innerHTML=h;nav();
+}
+nav();load();
+</script>
+</body>
+</html>
