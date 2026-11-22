@@ -18,6 +18,18 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* Login Screen */
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#f8fafc 0%,#eef2ff 100%)}
+.auth-card{width:100%;max-width:390px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 24px;box-shadow:0 10px 25px rgba(15,23,42,.06)}
+.auth-head{text-align:center;margin-bottom:22px}
+.auth-logo{width:46px;height:46px;border-radius:13px;background:var(--navy);color:#fff;display:grid;place-items:center;margin:0 auto 12px}
+.auth-head h1{margin:0 0 4px;font-size:20px;font-weight:800}
+.auth-head p{margin:0;color:var(--mut);font-size:13px}
+.auth-err{background:var(--ros-bg);color:var(--ros);border:1px solid #fecdd3;border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:600;margin-bottom:14px;display:none}
+.pin-inp{letter-spacing:.35em;font-weight:700;font-size:17px;text-align:center}
+
+/* App Layout */
 .shell{display:flex;min-height:100vh}
 .side{width:244px;flex-shrink:0;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;padding:18px 14px;z-index:30}
 .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
@@ -32,6 +44,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Plus Jakarta 
 .nbtn.on .nbadge{background:rgba(255,255,255,.18);color:#fff}
 .sfoot{margin-top:auto;padding:14px 6px 0;border-top:1px solid var(--line2);display:flex;align-items:center;gap:10px}
 .ava{width:34px;height:34px;border-radius:10px;background:var(--ind-bg);color:var(--ind);font-weight:700;font-size:13px;display:grid;place-items:center;text-transform:uppercase;flex-shrink:0}
+.logout-btn{margin-left:auto;border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:8px;padding:5px 9px;font:600 11.5px inherit;cursor:pointer}
+.logout-btn:hover{background:var(--ros-bg);color:var(--ros);border-color:#fecdd3}
+
 .main{flex:1;min-width:0;padding:24px 28px 48px}.wrap{max-width:1100px;margin:0 auto}
 .mbar{display:none;align-items:center;justify-content:space-between;background:var(--card);border-bottom:1px solid var(--line);padding:12px 16px;position:sticky;top:0;z-index:25}
 .mnav{display:none;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:30;gap:4px}
@@ -48,7 +63,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Plus Jakarta 
 .btn-org{background:var(--org);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:600 13.5px inherit;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
 .btn-org:hover{background:var(--org2)}
 
-/* Split Grid: Chart + 3 Stats */
+/* Split Grid */
 .split{display:grid;grid-template-columns:1.85fr 1fr;gap:16px;margin-bottom:22px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--sh)}
 .chead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
@@ -74,7 +89,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Plus Jakarta 
 .qaico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center}.qaico svg{width:18px;height:18px}
 .qatitle{font-weight:700;font-size:13.5px;margin-bottom:2px}.qasub{font-size:12px;color:var(--mut)}
 
-/* Water Strip & Chart */
+/* Water & Chart */
 .wstrip{background:var(--bg);border:1px solid var(--line2);border-radius:11px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .wtrack{flex:1;min-width:110px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
 .wfill{height:100%;background:linear-gradient(90deg,#0284c7,#4f46e5);border-radius:99px;transition:width .3s}
@@ -104,12 +119,14 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafbfd}
 .bxs:hover{background:var(--sub)}.bxs.pri{background:var(--navy);border-color:var(--navy);color:#fff}
 .bdel{border:0;background:none;color:var(--mut2);cursor:pointer;font-size:12px;padding:4px 8px;border-radius:6px}.bdel:hover{background:var(--ros-bg);color:var(--ros)}
 
-/* Subpages */
+/* Forms */
 .twocol{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
 .fld{margin-bottom:12px}.fld label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:4px}
-input,select{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:9px 12px;font:13.5px inherit}
+input,select{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:10px 12px;font:13.5px inherit;outline:none}
+input:focus,select:focus{border-color:var(--ind)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.bfull{width:100%;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:600 13.5px inherit;cursor:pointer}
+.bfull{width:100%;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:11px 16px;font:600 13.5px inherit;cursor:pointer}
+.bfull:hover{background:var(--navy2)}
 .empty{padding:26px 18px;text-align:center;color:var(--mut);font-size:13.5px}
 
 @media(max-width:960px){.split,.twocol{grid-template-columns:1fr}.sstack{flex-direction:row}.qagrid{grid-template-columns:repeat(2,1fr)}}
@@ -117,18 +134,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--card);colo
 </style>
 </head>
 <body>
-<div class="mbar">
-  <div style="display:flex;align-items:center;gap:9px">
-    <div class="b-ico" style="width:30px;height:30px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg></div>
-    <b style="font-size:14px">Tracker Rumah</b>
-  </div>
-  <span id="muser" class="pill p-gry"></span>
-</div>
-<div class="shell">
-  <aside class="side" id="side"></aside>
-  <main class="main"><div class="wrap" id="app"><div class="card"><div class="empty">Memuat dashboard...</div></div></div></main>
-</div>
-<nav class="mnav" id="mnav"></nav>
+<div id="root"><div class="auth-wrap"><div class="mut">Memuat...</div></div></div>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -158,25 +164,77 @@ const IC={
   clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
 };
 
-window.onerror=(m,u,l)=>{$('#app').innerHTML=`<div class="card"><b>Error Script</b><p style="color:var(--mut)">${esc(m)} (baris ${l})</p></div>`};
 window.onunhandledrejection=e=>alert(e.reason?.message||'Terjadi kesalahan');
 
 async function api(m,p,b){
   const r=await fetch('/api/'+p,{method:m,headers:{'content-type':'application/json'},body:b?JSON.stringify(b):undefined});
-  const ct=r.headers.get('content-type')||'';
-  if(!ct.includes('application/json'))throw new Error('Sesi login habis atau API tidak merespons JSON. Coba refresh halaman.');
-  const j=await r.json();
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401 && p!=='login'){
+    renderLogin();
+    throw new Error('AUTH_REQUIRED');
+  }
   if(!r.ok)throw new Error(j.error||'Gagal memproses permintaan');
   return j;
+}
+
+/* Halaman Login Email + PIN */
+function renderLogin(errMsg=''){
+  const savedEmail=localStorage.getItem('tr_email')||'';
+  $('#root').innerHTML=`
+    <div class="auth-wrap">
+      <form class="auth-card" onsubmit="doLogin(event)">
+        <div class="auth-head">
+          <div class="auth-logo">${IC.home}</div>
+          <h1>Tracker Rumah</h1>
+          <p>Masuk dengan Email dan PIN untuk membuka dashboard</p>
+        </div>
+        <div id="auth-err" class="auth-err" style="${errMsg?'display:block':''}">${esc(errMsg)}</div>
+        <div class="fld">
+          <label>Email</label>
+          <input id="l-email" type="email" required autocomplete="email" placeholder="nama@email.com" value="${esc(savedEmail)}">
+        </div>
+        <div class="fld">
+          <label>PIN</label>
+          <input id="l-pin" class="pin-inp" type="password" inputmode="numeric" required autocomplete="current-password" placeholder="••••••">
+        </div>
+        <button id="l-btn" class="bfull" type="submit" style="margin-top:6px">Masuk</button>
+      </form>
+    </div>
+  `;
+  setTimeout(()=>(savedEmail?$('#l-pin'):$('#l-email'))?.focus(),50);
+}
+
+async function doLogin(e){
+  e.preventDefault();
+  const email=$('#l-email').value.trim();
+  const pin=$('#l-pin').value.trim();
+  const btn=$('#l-btn'), err=$('#auth-err');
+  btn.disabled=true; btn.textContent='Memeriksa...'; err.style.display='none';
+  try{
+    await api('POST','login',{email,pin});
+    localStorage.setItem('tr_email',email);
+    await load();
+  }catch(ex){
+    err.textContent=ex.message;
+    err.style.display='block';
+    btn.disabled=false; btn.textContent='Masuk';
+    $('#l-pin').select();
+  }
+}
+
+async function doLogout(){
+  await api('POST','logout').catch(()=>{});
+  renderLogin();
 }
 
 async function load(){
   try{
     const d=await api('GET','state');
     S={items:d.items||[],habits:d.habits||[],logs:d.logs||[],me:d.me||'user'};
-    render();
+    renderShell();
   }catch(e){
-    $('#app').innerHTML=`<div class="card"><b>Data belum bisa dimuat</b><p style="color:var(--mut);margin:6px 0 12px">${esc(e.message)}</p><button class="bfull" style="width:auto" onclick="location.reload()">Muat Ulang</button></div>`;
+    if(e.message==='AUTH_REQUIRED') return;
+    $('#root').innerHTML=`<div class="auth-wrap"><div class="auth-card"><b>Data belum bisa dimuat</b><p style="color:var(--mut);margin:6px 0 14px">${esc(e.message)}</p><button class="bfull" onclick="load()">Coba Lagi</button></div></div>`;
   }
 }
 
@@ -195,13 +253,34 @@ async function addItem(){const n=$('#in-name').value.trim();if(!n)return;await a
 async function markOut(id,d){await api('PATCH','items/'+id,{out_date:d});load()}
 async function delItem(id){if(confirm('Hapus catatan barang ini?')){await api('DELETE','items/'+id);load()}}
 
-function go(t){tab=t;render();scrollTo(0,0)}
-function setDays(n){cDays=n;render()}
-function setSTab(t){sTab=t;render()}
+function go(t){tab=t;renderView();scrollTo(0,0)}
+function setDays(n){cDays=n;renderView()}
+function setSTab(t){sTab=t;renderView()}
+
+function renderShell(){
+  const u=S.me.split('@')[0];
+  $('#root').innerHTML=`
+    <div class="mbar">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div class="b-ico" style="width:30px;height:30px">${IC.home}</div>
+        <b style="font-size:14px">Tracker Rumah</b>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="pill p-gry">${esc(u)}</span>
+        <button class="logout-btn" onclick="doLogout()">Keluar</button>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="side" id="side"></aside>
+      <main class="main"><div class="wrap" id="app"></div></main>
+    </div>
+    <nav class="mnav" id="mnav"></nav>
+  `;
+  renderView();
+}
 
 function renderNav(ac,sc,mc){
   const u=S.me.split('@')[0];
-  $('#muser').textContent=u;
   const nav=[['home','Dashboard',IC.grid,''],['stock','Stok Barang',IC.box,ac],['daily','Harian Bersama',IC.users,sc],['me','Punyaku',IC.user,mc]];
   $('#side').innerHTML=`
     <div class="brand"><div class="b-ico">${IC.home}</div><div><div class="b-t">Tracker Rumah</div><div class="b-s">Home & Habit Hub</div></div></div>
@@ -210,7 +289,11 @@ function renderNav(ac,sc,mc){
     <div class="nsec">Quick Actions</div>
     <button class="nbtn" onclick="go('stock')">${IC.plus}<span>Catat Barang Masuk</span></button>
     <button class="nbtn" onclick="go('daily')">${IC.check}<span>Cek Kebiasaan</span></button>
-    <div class="sfoot"><div class="ava">${esc(u.slice(0,2))}</div><div style="min-width:0"><div style="font-weight:700;font-size:13px">${esc(u)}</div><div class="b-s">Anggota Rumah</div></div></div>`;
+    <div class="sfoot">
+      <div class="ava">${esc(u.slice(0,2))}</div>
+      <div style="min-width:0"><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis">${esc(u)}</div><div class="b-s">Aktif</div></div>
+      <button class="logout-btn" onclick="doLogout()">Keluar</button>
+    </div>`;
   $('#mnav').innerHTML=nav.map(([id,lbl,ic])=>`<button class="${tab===id?'on':''}" onclick="go('${id}')">${ic}<span>${lbl.split(' ')[0]}</span></button>`).join('');
 }
 
@@ -378,7 +461,7 @@ function renderHabits(list,shared){
   </div>`;
 }
 
-function render(){
+function renderView(){
   const sh=S.habits.filter(h=>h.owner==='*'),mine=S.habits.filter(h=>h.owner!=='*'),act=S.items.filter(i=>!i.out_date),fin=S.items.filter(i=>i.out_date);
   renderNav(act.length,sh.length,mine.length);
   if(tab==='home')$('#app').innerHTML=renderHome(sh,mine,act,fin);
@@ -386,6 +469,7 @@ function render(){
   if(tab==='daily')$('#app').innerHTML=renderHabits(sh,true);
   if(tab==='me')$('#app').innerHTML=renderHabits(mine,false);
 }
+
 load();
 </script>
 </body>
