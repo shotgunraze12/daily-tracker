@@ -1,6 +1,5 @@
-/* Tab Meal plan + Recipe Library: dimuat setelah script utama di index.html */
+/* Tab Meal plan + Recipe Library */
 (() => {
-  /* ── icons ── */
   ICONS.utensils = 'M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7';
   ICONS.book = 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z';
   NAV[0][1].push(['meal', 'Meal plan', 'utensils']);
@@ -10,7 +9,6 @@
   const weekStart = d => addDays(d, -((new Date(d + 'T00:00:00').getDay() + 6) % 7));
   const longDay = d => new Date(d + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
 
-  /* ── Kategori resep preset ── */
   const CAT_GROUPS = {
     'Cara masak': ['Goreng', 'Rebus', 'Kukus', 'Panggang', 'Tumis', 'Bakar', 'Mentah/Segar'],
     'Bahan utama': ['Ayam', 'Daging sapi', 'Ikan', 'Udang', 'Telur', 'Tahu/Tempe', 'Sayuran', 'Nasi', 'Mie'],
@@ -20,7 +18,6 @@
 
   let M = [], R = [], wk = weekStart(today());
 
-  /* ── API helpers ── */
   async function loadMeals() {
     try { M = (await api('GET', `meals?from=${wk}&to=${addDays(wk, 6)}`)).meals || []; return true; }
     catch (e) { if (e.status === 401) { renderLogin(); return false; } throw e; }
@@ -32,13 +29,10 @@
   async function refreshMeal() { if (await loadMeals() && await loadRecipes()) render(); }
   async function refreshRecipe() { if (await loadRecipes()) render(); }
 
-  /* ── helpers ── */
   const recipeName = id => { const r = R.find(x => x.id === id); return r ? r.name : ''; };
   const parseCats = s => { try { return JSON.parse(s || '[]'); } catch { return []; } };
 
-  /* ═══════════════════════════════════════════
-     MEAL PLAN TAB
-     ═══════════════════════════════════════════ */
+  /* ═══ MEAL PLAN TAB ═══ */
   const mealRow = m => {
     const linked = m.recipe_id && recipeName(m.recipe_id);
     return `<div class="row" style="margin-top:10px">
@@ -57,7 +51,6 @@
     const cals = days.map(d => sumCal(by(d)));
     const maxCal = Math.max(1, ...cals);
     const cur = wk === weekStart(today());
-
     const recipeOpts = R.map(r => `<option value="${r.id}">${esc(r.name)}${r.serves ? ' (' + r.serves + ' porsi)' : ''}</option>`).join('');
 
     $('#app').innerHTML = `<div class="ph"><h1>Meal plan</h1><div class="mut">Rencana makan mingguan beserta kalorinya, dilihat berdua.</div></div>
@@ -95,9 +88,7 @@
     try { await api('POST', 'meals/copy', { from_start: addDays(wk, -7), to_start: wk }); await refreshMeal(); } catch (e) { alert(e.message); }
   };
 
-  /* ═══════════════════════════════════════════
-     RECIPE TAB
-     ═══════════════════════════════════════════ */
+  /* ═══ RECIPE TAB ═══ */
   let recipeFilter = '';
 
   function catCheckboxes(selected) {
@@ -111,10 +102,6 @@
     ).join('');
   }
 
-  function getCheckedCats(prefix) {
-    return [...document.querySelectorAll((prefix || '') + '.rc-cat:checked')].map(c => c.value);
-  }
-
   const recipeCard = r => {
     const cats = parseCats(r.categories);
     return `<div class="card"><div class="row"><div class="sp"><b>${esc(r.name)}</b>
@@ -123,8 +110,8 @@
       ${r.instructions ? `<div class="mut" style="margin-top:6px;white-space:pre-wrap">${esc(r.instructions)}</div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:4px">
-        <button class="x" onclick="recipeDel(${r.id})">Hapus</button>
         <button class="x" onclick="recipeEdit(${r.id})">Edit</button>
+        <button class="x" onclick="recipeDel(${r.id})">Hapus</button>
       </div>
     </div></div>`;
   };
@@ -155,7 +142,7 @@
 
   window.addRecipe = async () => {
     const name = $('#r-name').value.trim(); if (!name) return;
-    const cats = getCheckedCats('#');
+    const cats = [...document.querySelectorAll('.rc-cat:checked')].map(c => c.value);
     await api('POST', 'recipes', {
       name, shared: true,
       categories: JSON.stringify(cats),
