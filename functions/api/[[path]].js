@@ -1,6 +1,4 @@
 // Backend: Cloudflare Worker + D1 (binding: DB)
-// Login Email + PIN: USERS="ariiramaadhan@gmail.com:060125"
-// Webhook Hevy / Apple Health: WEBHOOK_SECRET="hevy-apps"
 
 const json = (d, s = 200, headers = {}) =>
   new Response(JSON.stringify(d), {
@@ -86,6 +84,23 @@ async function ensureWorkoutsTable(db) {
         source TEXT DEFAULT 'Hevy',
         ext_id TEXT NOT NULL,
         UNIQUE(email, ext_id)
+      )`
+    )
+    .run();
+}
+
+async function ensureRecipesTable(db) {
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        owner TEXT NOT NULL,
+        name TEXT NOT NULL,
+        categories TEXT DEFAULT '',
+        instructions TEXT DEFAULT '',
+        serves INTEGER DEFAULT 1,
+        calories_per_serve INTEGER DEFAULT 0,
+        created_by TEXT
       )`
     )
     .run();
@@ -203,6 +218,7 @@ async function handleApi(request, env, pathParts) {
   try {
     if (res === 'state' && method === 'GET') {
       await ensureWorkoutsTable(db);
+      await ensureRecipesTable(db);
       const since = new Date(Date.now() - 40 * 864e5).toISOString().slice(0, 10);
       const items = (await db.prepare('SELECT * FROM items ORDER BY in_date DESC, id DESC LIMIT 500').all()).results;
       const habits = (await db.prepare("SELECT * FROM habits WHERE owner IN ('*', ?) ORDER BY id").bind(email).all()).results;
@@ -215,7 +231,8 @@ async function handleApi(request, env, pathParts) {
           .all()
       ).results;
       const workouts = (await db.prepare('SELECT * FROM workouts ORDER BY date DESC, id DESC LIMIT 30').all()).results;
-      return json({ me: email, items, habits, logs, workouts });
+      const recipes = (await db.prepare('SELECT id, name, categories, instructions, serves, calories_per_serve FROM recipes WHERE owner IN ("*", ?) ORDER BY name').bind(email).all()).results;
+      return json({ me: email, items, habits, logs, workouts, recipes });
     }
 
     if (res === 'workouts' && id && method === 'DELETE') {
@@ -258,6 +275,45 @@ async function handleApi(request, env, pathParts) {
         db.prepare('DELETE FROM logs WHERE habit_id = ?').bind(Number(id)),
         db.prepare('DELETE FROM habits WHERE id = ?').bind(Number(id)),
       ]);
+      return json({ ok: true });
+    }
+
+    if (res === 'recipes' && method === 'GET') {
+      await ensureRecipesTable(db);
+      const rows = (await db.prepare('SELECT id, name, categories, instructions, serves, calories_per_serve FROM recipes WHERE owner IN ("*", ?) ORDER BY name').bind(email).all()).results;
+      return json({ recipes: rows });
+    }
+
+    if (res === 'recipes' && method === 'POST') {
+      await ensureRecipesTable(db);
+      const name = (body.name || '').trim();
+      if (!name) return json({ error: 'Nama resep wajib diisi.' }, 400);
+      const categories = body.categories || '';
+      const instructions = body.instructions || '';
+      const serves = body.serves !== undefined ? Number(body.serves) : 1;
+      const calPerServe = Math.max(0, Math.round(Number(body.calories_per_serve) || 0));
+      await db.prepare('INSERT INTO recipes (owner, name, categories, instructions, serves, calories_per_serve, created_by) VALUES (?,?,?,?,?,?,?)')
+        .bind(body.shared ? '*' : email, name, categories, instructions, serves, calPerServe, email).run();
+      return json({ ok: true });
+    }
+
+    if (res === 'recipes' && id && method === 'PATCH') {
+      const sets = [], vals = [];
+      if (body.name !== undefined) {
+        const n = String(body.name).trim();
+        if (!n) return json({ error: 'Nama resep wajib diisi.' }, 400);
+        sets.push('name = ?'); vals.push(n);
+      }
+      if (body.categories !== undefined) { sets.push('categories = ?'); vals.push(body.categories); }
+      if (body.instructions !== undefined) { sets.push('instructions = ?'); vals.push(body.instructions); }
+      if (body.serves !== undefined) { sets.push('serves = ?'); vals.push(Number(body.serves)); }
+      if (body.calories_per_serve !== undefined) { sets.push('calories_per_serve = ?'); vals.push(Math.max(0, Math.round(Number(body.calories_per_serve) || 0))); }
+      if (sets.length) await db.prepare('UPDATE recipes SET ' + sets.join(', ') + ' WHERE id = ?').bind(...vals, id).run();
+      return json({ ok: true });
+    }
+
+    if (res === 'recipes' && id && method === 'DELETE') {
+      await db.prepare('DELETE FROM recipes WHERE id = ?').bind(Number(id)).run();
       return json({ ok: true });
     }
 
