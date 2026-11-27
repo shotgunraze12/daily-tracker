@@ -1,8 +1,10 @@
 import { onRequest } from '../functions/api/[[path]].js';
 import { handleMeals } from './meals.js';
+import { handleRecipes } from './recipes.js';
 import { handleGoals } from './goals.js';
+import { handleHx } from './hx.js';
 
-const MODULES = { meals: handleMeals, goals: handleGoals };
+const MODULES = { meals: handleMeals, recipes: handleRecipes, goals: handleGoals, hx: handleHx };
 
 export default {
   async fetch(request, env) {
