@@ -3,8 +3,9 @@ import { handleMeals } from './meals.js';
 import { handleRecipes } from './recipes.js';
 import { handleGoals } from './goals.js';
 import { handleHx } from './hx.js';
+import { handleStock } from './stock.js';
 
-const MODULES = { meals: handleMeals, recipes: handleRecipes, goals: handleGoals, hx: handleHx };
+const MODULES = { meals: handleMeals, recipes: handleRecipes, goals: handleGoals, hx: handleHx, stock: handleStock };
 
 export default {
   async fetch(request, env) {
